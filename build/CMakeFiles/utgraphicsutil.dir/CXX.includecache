@@ -1,0 +1,30 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A3/skinning/lib/image.h
+vector
+-
+
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A3/skinning/lib/jpegio.cc
+jpegio.h
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A3/skinning/lib/jpegio.h
+vector
+-
+jpeglib.h
+-
+stdio.h
+-
+iostream
+-
+
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A3/skinning/lib/jpegio.h
+string
+-
+image.h
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A3/skinning/lib/image.h
+
