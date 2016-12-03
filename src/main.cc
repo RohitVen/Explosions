@@ -74,6 +74,30 @@ void main()
 }
 )zzz";
 
+const char* bill_vertex_shader =
+R"zzz(
+#version 330 core
+uniform mat4 projection;
+// uniform mat4 model;
+uniform mat4 view;
+in vec4 position;
+
+void main()
+{
+	gl_Position = projection * view * position;
+}
+)zzz";
+
+// const char* bill_fragment_shader =
+// R"zzz(#version 330 core
+// out vec4 color;
+
+// void main()
+// {
+// 	color = vec4(0.0, 191.0, 255.0, 1.0);
+// }
+// )zzz";
+
 void ErrorCallback(int error, const char* description) {
 	std::cerr << "GLFW Error: " << description << "\n";
 }
@@ -125,10 +149,11 @@ int main(int argc, char* argv[])
 		<< " vertices and " << mesh.faces.size() << " faces.\n";
 
 	glm::vec4 mesh_center = glm::vec4(0.0f);
-	for (size_t i = 0; i < mesh.vertices.size(); ++i) {
-		mesh_center += mesh.vertices[i];
-	}
-	mesh_center /= mesh.vertices.size();
+	// for (size_t i = 0; i < mesh.vertices.size(); ++i) {
+	// 	mesh_center += mesh.vertices[i];
+	// }
+	// mesh_center /= mesh.vertices.size();
+
 
 	/*
 	 * GUI object needs the mesh object for bone manipulation.
@@ -232,6 +257,33 @@ int main(int argc, char* argv[])
 
 	// FIXME: Create the RenderPass objects for bones here.
 	//        Otherwise do whatever you like.
+	static const float bill_vertex_data[] = {
+ 	-5.0f, 0.0f, 1.0f,
+ 	5.0f, 0.0f, 1.0f,
+ 	-5.0f, 5.0f, 1.0f,
+ 	5.0f, 5.0f, 1.0f,
+	};
+	std::vector<glm::vec4> bill_vertices;
+	bill_vertices.push_back(glm::vec4(bill_vertex_data[6],bill_vertex_data[7],bill_vertex_data[8],1.0));
+	bill_vertices.push_back(glm::vec4(bill_vertex_data[9],bill_vertex_data[10],bill_vertex_data[11],1.0));
+	bill_vertices.push_back(glm::vec4(bill_vertex_data[3],bill_vertex_data[4],bill_vertex_data[5],1.0));
+	bill_vertices.push_back(glm::vec4(bill_vertex_data[0],bill_vertex_data[1],bill_vertex_data[2],1.0));
+
+	std::vector<glm::uvec3> bill_faces;
+	bill_faces.push_back(glm::uvec3(2,0,3));
+	bill_faces.push_back(glm::uvec3(1,0,2));
+
+	RenderDataInput bill_pass_input;
+	bill_pass_input.assign(0, "vertex_position", bill_vertices.data(), bill_vertices.size(), 4, GL_FLOAT);
+	bill_pass_input.assign_index(bill_faces.data(), bill_faces.size(), 3);
+	RenderPass bill_pass(-1,
+			bill_pass_input,
+			{ bill_vertex_shader, nullptr, cyl_fragment_shader},
+			{ std_model, std_view, std_proj},
+			{ "color" }
+			);
+
+
 
 	RenderDataInput bone_pass_input;
 	bone_pass_input.assign(0, "vertex_postion", bone_vertices.data(), bone_vertices.size(), 4, GL_FLOAT);
@@ -268,6 +320,7 @@ int main(int argc, char* argv[])
 	bool draw_object = true;
 	bool draw_cylinder = true;
 	bool draw_bone = gui.isTransparent();
+	bool draw_bill = true;
 
 	while (!glfwWindowShouldClose(window)) {
 		// Setup some basic window stuff.
@@ -295,10 +348,16 @@ int main(int argc, char* argv[])
 		// FIXME: Draw bones first.
 		// Then draw floor.
 		draw_bone = gui.isTransparent();
+
+		if(draw_bill)
+		{
+			// std::cout<<"\nDraw the bill!";
+			bill_pass.setup();
+			CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, bill_faces.size() * 3, GL_UNSIGNED_INT, 0));
+		}
+
 		if(draw_bone)
 		{
-			// std::cout<<"\nABOUT TO DRAW CYLINDER!!";
-			// std::cout<<"\nABOUT TO DRAW CYLINDER!!";
 			bone_pass.setup();
 			CHECK_GL_ERROR(glDrawElements(GL_LINES, bone_faces.size() * 3, GL_UNSIGNED_INT, 0));
 		}

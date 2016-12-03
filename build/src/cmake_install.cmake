@@ -1,4 +1,4 @@
-# Install script for directory: /v/filer4b/v38q001/rohitven/Desktop/CS354/A3/skinning/src
+# Install script for directory: /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src
 
 # Set the install prefix
 IF(NOT DEFINED CMAKE_INSTALL_PREFIX)
