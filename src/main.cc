@@ -6,12 +6,15 @@
 #include "render_pass.h"
 #include "config.h"
 #include "gui.h"
+#include "pngimage.h"
 
 #include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include <glm/gtx/component_wise.hpp>
 #include <glm/gtx/rotate_vector.hpp>
@@ -19,6 +22,8 @@
 #include <glm/gtx/io.hpp>
 #include <debuggl.h>
 #include <iostream>
+
+
 
 int window_width = 800, window_height = 600;
 const std::string window_title = "Skinning";
@@ -93,15 +98,38 @@ void main()
 }
 )zzz";
 
-// const char* bill_fragment_shader =
-// R"zzz(#version 330 core
-// out vec4 color;
+const char* tex_vertex_shader =
+R"zzz(
+#version 330 core
+uniform mat4 projection;
+uniform mat4 view;
+in vec4 position;
+in vec2 uv;
+out vec2 uv_vert;
 
-// void main()
-// {
-// 	color = vec4(0.0, 191.0, 255.0, 1.0);
-// }
-// )zzz";
+void main()
+{
+	vec4 center = vec4(0,0,0,1);
+	center = projection * view * center;
+	vec4 cam_up = vec4(view[0][1], view[1][1], view[2][1], view[3][1]);
+	vec4 cam_r = vec4(view[0][0], view[1][0], view[2][0], view[3][0]);
+	vec4 p = center + cam_r * position.x * 100 + cam_up * position.y * 100;
+	gl_Position = projection * view * p;
+	uv_vert = uv;
+}
+)zzz";
+
+const char* tex_fragment_shader =
+R"zzz(#version 330 core
+in vec2 uv_vert;
+out vec4 color;
+uniform sample2D t;
+
+void main()
+{
+	color = texture(t, uv);
+}
+)zzz";
 
 void ErrorCallback(int error, const char* description) {
 	std::cerr << "GLFW Error: " << description << "\n";
@@ -130,6 +158,31 @@ GLFWwindow* init_glefw()
 	std::cout << "OpenGL version supported:" << version << "\n";
 
 	return ret;
+}
+
+void loadPNG( std::string filename, std::vector<unsigned char> &data ) 
+{
+	int start = (int) filename.find_last_of('.');
+	int end = (int) filename.size() - 1;
+	if (start >= 0 && start < end) {
+		std::string ext = filename.substr(start, end);
+		if (!ext.compare(".png")) {
+			png_cleanup(1);
+			std::cout<<"\npng_init: "<<png_init(filename.c_str(), window_width, window_height);
+			if (!png_init(filename.c_str(), window_width, window_height)) {
+				double gamma = 2.2;
+				int channels, rowBytes;
+				unsigned char* indata = png_get_image(gamma, channels, rowBytes);
+				int bufsize = rowBytes * window_height;
+				// data = new unsigned char[bufsize];
+				for (int j = 0; j < window_height; j++)
+					for (int i = 0; i < rowBytes; i += channels)
+						for (int k = 0; k < channels; k++)
+							data.push_back(*(indata + k + i + (window_height - j - 1) * rowBytes));
+				png_cleanup(1);
+			}
+		}
+	}
 }
 
 int main(int argc, char* argv[])
@@ -264,22 +317,11 @@ int main(int argc, char* argv[])
 	//        Otherwise do whatever you like.
 
 
-	//Start Billboard code//
-	static const float bill_vertex_data[] = {
- 	-5.0f, 0.0f, 1.0f,
- 	5.0f, 0.0f, 1.0f,
- 	-5.0f, 5.0f, 1.0f,
- 	5.0f, 5.0f, 1.0f,
-	};
-	std::vector<glm::vec4> bill_vertices;
-	bill_vertices.push_back(glm::vec4(bill_vertex_data[6],bill_vertex_data[7],bill_vertex_data[8],1.0));
-	bill_vertices.push_back(glm::vec4(bill_vertex_data[9],bill_vertex_data[10],bill_vertex_data[11],1.0));
-	bill_vertices.push_back(glm::vec4(bill_vertex_data[3],bill_vertex_data[4],bill_vertex_data[5],1.0));
-	bill_vertices.push_back(glm::vec4(bill_vertex_data[0],bill_vertex_data[1],bill_vertex_data[2],1.0));
+	//Start Billboard Code//
 
+	std::vector<glm::vec4> bill_vertices;
 	std::vector<glm::uvec3> bill_faces;
-	bill_faces.push_back(glm::uvec3(2,0,3));
-	bill_faces.push_back(glm::uvec3(1,0,2));
+	create_bill(bill_vertices, bill_faces);
 
 	RenderDataInput bill_pass_input;
 	bill_pass_input.assign(0, "vertex_position", bill_vertices.data(), bill_vertices.size(), 4, GL_FLOAT);
@@ -291,27 +333,52 @@ int main(int argc, char* argv[])
 			{ "color" }
 			);
 
-	//End Billboard code//
+	//End Billboard Code//
 
 
 
-	RenderDataInput bone_pass_input;
-	bone_pass_input.assign(0, "vertex_postion", bone_vertices.data(), bone_vertices.size(), 4, GL_FLOAT);
-	bone_pass_input.assign_index(bone_faces.data(), bone_faces.size(), 2);
-	RenderPass bone_pass(-1, bone_pass_input, 
-		{bone_vertex_shader, nullptr, bone_fragment_shader}, 
-		{ std_view, std_proj}, 
-		{ "color" }
-		);
+	//Start Texture Code//
+	std::string filename = "../assets/cloud_smoke_textures/Could and Smoke Textures/cloud_14.png";
+	std::vector<unsigned char> data;
+	std::cout<<"\ndata size: "<<data.size();
+	loadPNG(filename, data); 
+	std::cout<<"\ndata size after loading: "<<data.size()<<"\n";
 
-	RenderDataInput cyl_pass_input;
-	cyl_pass_input.assign(0, "vertex_postion", cyl_vertices.data(), cyl_vertices.size(), 4, GL_FLOAT);
-	cyl_pass_input.assign_index(cyl_faces.data(), cyl_faces.size(), 2);
-	RenderPass cyl_pass(-1, cyl_pass_input, 
-		{bone_vertex_shader, nullptr, cyl_fragment_shader}, 
-		{std_model, std_view, std_proj}, 
-		{ "color" }
-		);
+	// std::vector<glm::vec2> tex_uv;
+
+	// RenderDataInput tex_pass_input;
+		// tex_pass_input.assign(0, "vertex_position", bill_vertices.data(), bill_vertices.size(), 4, GL_FLOAT);
+		// tex_pass_input.assign(1, "uv", tex_uv.data(), tex_uv.size(), 2, GL_FLOAT);
+		// tex_pass_input.assign_index(bill_faces.data(), bill_faces.size(), 3);
+		// RenderPass tex_pass(-1,
+		// 		tex_pass_input,
+		// 		{ tex_vertex_shader, nullptr, tex_fragment_shader},
+		// 		{ std_model, std_view, std_proj},
+		// 		{ "color" }
+		// 		);
+	//End Texture Code//
+
+
+
+
+
+	// RenderDataInput bone_pass_input;
+	// bone_pass_input.assign(0, "vertex_postion", bone_vertices.data(), bone_vertices.size(), 4, GL_FLOAT);
+	// bone_pass_input.assign_index(bone_faces.data(), bone_faces.size(), 2);
+	// RenderPass bone_pass(-1, bone_pass_input, 
+	// 	{bone_vertex_shader, nullptr, bone_fragment_shader}, 
+	// 	{ std_view, std_proj}, 
+	// 	{ "color" }
+	// 	);
+
+	// RenderDataInput cyl_pass_input;
+	// cyl_pass_input.assign(0, "vertex_postion", cyl_vertices.data(), cyl_vertices.size(), 4, GL_FLOAT);
+	// cyl_pass_input.assign_index(cyl_faces.data(), cyl_faces.size(), 2);
+	// RenderPass cyl_pass(-1, cyl_pass_input, 
+	// 	{bone_vertex_shader, nullptr, cyl_fragment_shader}, 
+	// 	{std_model, std_view, std_proj}, 
+	// 	{ "color" }
+	// 	);
 
 	RenderDataInput floor_pass_input;
 	floor_pass_input.assign(0, "vertex_position", floor_vertices.data(), floor_vertices.size(), 4, GL_FLOAT);
@@ -363,30 +430,32 @@ int main(int argc, char* argv[])
 		{
 			// std::cout<<"\nDraw the bill!";
 			bill_pass.setup();
+			// tex_pass.setup();
+			// CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, tex_faces.size() * 3, GL_UNSIGNED_INT, 0));
 			CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, bill_faces.size() * 3, GL_UNSIGNED_INT, 0));
 		}
 
-		if(draw_bone)
-		{
-			bone_pass.setup();
-			CHECK_GL_ERROR(glDrawElements(GL_LINES, bone_faces.size() * 3, GL_UNSIGNED_INT, 0));
-		}
+		// if(draw_bone)
+		// {
+		// 	bone_pass.setup();
+		// 	CHECK_GL_ERROR(glDrawElements(GL_LINES, bone_faces.size() * 3, GL_UNSIGNED_INT, 0));
+		// }
 
-		if(draw_cylinder)
-		{
-			cyl_vertices.clear();
-			cyl_faces.clear();
-			create_cylinder(cyl_vertices, cyl_faces, mesh, current_bone); //Create cylinders!!
-			cyl_pass_input.assign(0, "vertex_postion", cyl_vertices.data(), cyl_vertices.size(), 4, GL_FLOAT);
-			cyl_pass_input.assign_index(cyl_faces.data(), cyl_faces.size(), 2);
-			RenderPass cyl_pass(-1, cyl_pass_input, 
-				{bone_vertex_shader, nullptr, cyl_fragment_shader}, 
-				{std_model, std_view, std_proj}, 
-				{ "color" }
-				);
-			cyl_pass.setup();
-			CHECK_GL_ERROR(glDrawElements(GL_LINES, cyl_faces.size() * 3, GL_UNSIGNED_INT, 0));
-		}
+		// if(draw_cylinder)
+		// {
+		// 	cyl_vertices.clear();
+		// 	cyl_faces.clear();
+		// 	create_cylinder(cyl_vertices, cyl_faces, mesh, current_bone); //Create cylinders!!
+		// 	cyl_pass_input.assign(0, "vertex_postion", cyl_vertices.data(), cyl_vertices.size(), 4, GL_FLOAT);
+		// 	cyl_pass_input.assign_index(cyl_faces.data(), cyl_faces.size(), 2);
+		// 	RenderPass cyl_pass(-1, cyl_pass_input, 
+		// 		{bone_vertex_shader, nullptr, cyl_fragment_shader}, 
+		// 		{std_model, std_view, std_proj}, 
+		// 		{ "color" }
+		// 		);
+		// 	cyl_pass.setup();
+		// 	CHECK_GL_ERROR(glDrawElements(GL_LINES, cyl_faces.size() * 3, GL_UNSIGNED_INT, 0));
+		// }
 
 
 		if (draw_floor) {

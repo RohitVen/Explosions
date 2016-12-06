@@ -167,13 +167,37 @@ src/CMakeFiles/skinning.dir/bone_geometry.cc.o.provides: src/CMakeFiles/skinning
 
 src/CMakeFiles/skinning.dir/bone_geometry.cc.o.provides.build: src/CMakeFiles/skinning.dir/bone_geometry.cc.o
 
+src/CMakeFiles/skinning.dir/pngimage.cpp.o: src/CMakeFiles/skinning.dir/flags.make
+src/CMakeFiles/skinning.dir/pngimage.cpp.o: ../src/pngimage.cpp
+	$(CMAKE_COMMAND) -E cmake_progress_report /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/build/CMakeFiles $(CMAKE_PROGRESS_6)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object src/CMakeFiles/skinning.dir/pngimage.cpp.o"
+	cd /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/build/src && /lusr/opt/gcc-5.2.0/bin/g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/skinning.dir/pngimage.cpp.o -c /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/pngimage.cpp
+
+src/CMakeFiles/skinning.dir/pngimage.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/skinning.dir/pngimage.cpp.i"
+	cd /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/build/src && /lusr/opt/gcc-5.2.0/bin/g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/pngimage.cpp > CMakeFiles/skinning.dir/pngimage.cpp.i
+
+src/CMakeFiles/skinning.dir/pngimage.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/skinning.dir/pngimage.cpp.s"
+	cd /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/build/src && /lusr/opt/gcc-5.2.0/bin/g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/pngimage.cpp -o CMakeFiles/skinning.dir/pngimage.cpp.s
+
+src/CMakeFiles/skinning.dir/pngimage.cpp.o.requires:
+.PHONY : src/CMakeFiles/skinning.dir/pngimage.cpp.o.requires
+
+src/CMakeFiles/skinning.dir/pngimage.cpp.o.provides: src/CMakeFiles/skinning.dir/pngimage.cpp.o.requires
+	$(MAKE) -f src/CMakeFiles/skinning.dir/build.make src/CMakeFiles/skinning.dir/pngimage.cpp.o.provides.build
+.PHONY : src/CMakeFiles/skinning.dir/pngimage.cpp.o.provides
+
+src/CMakeFiles/skinning.dir/pngimage.cpp.o.provides.build: src/CMakeFiles/skinning.dir/pngimage.cpp.o
+
 # Object files for target skinning
 skinning_OBJECTS = \
 "CMakeFiles/skinning.dir/render_pass.cc.o" \
 "CMakeFiles/skinning.dir/procedure_geometry.cc.o" \
 "CMakeFiles/skinning.dir/main.cc.o" \
 "CMakeFiles/skinning.dir/gui.cc.o" \
-"CMakeFiles/skinning.dir/bone_geometry.cc.o"
+"CMakeFiles/skinning.dir/bone_geometry.cc.o" \
+"CMakeFiles/skinning.dir/pngimage.cpp.o"
 
 # External object files for target skinning
 skinning_EXTERNAL_OBJECTS =
@@ -183,14 +207,19 @@ bin/skinning: src/CMakeFiles/skinning.dir/procedure_geometry.cc.o
 bin/skinning: src/CMakeFiles/skinning.dir/main.cc.o
 bin/skinning: src/CMakeFiles/skinning.dir/gui.cc.o
 bin/skinning: src/CMakeFiles/skinning.dir/bone_geometry.cc.o
+bin/skinning: src/CMakeFiles/skinning.dir/pngimage.cpp.o
 bin/skinning: src/CMakeFiles/skinning.dir/build.make
 bin/skinning: /usr/lib/x86_64-linux-gnu/libGLEW.so
 bin/skinning: libutgraphicsutil.a
 bin/skinning: /usr/lib/x86_64-linux-gnu/libGLEW.so
 bin/skinning: /usr/lib/x86_64-linux-gnu/libGL.so
 bin/skinning: /usr/lib/x86_64-linux-gnu/libjpeg.so
+bin/skinning: /usr/lib/x86_64-linux-gnu/libpng.so
+bin/skinning: /usr/lib/x86_64-linux-gnu/libz.so
 bin/skinning: /usr/lib/x86_64-linux-gnu/libGL.so
 bin/skinning: /usr/lib/x86_64-linux-gnu/libjpeg.so
+bin/skinning: /usr/lib/x86_64-linux-gnu/libpng.so
+bin/skinning: /usr/lib/x86_64-linux-gnu/libz.so
 bin/skinning: src/CMakeFiles/skinning.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking CXX executable ../bin/skinning"
 	cd /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/build/src && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/skinning.dir/link.txt --verbose=$(VERBOSE)
@@ -204,6 +233,7 @@ src/CMakeFiles/skinning.dir/requires: src/CMakeFiles/skinning.dir/procedure_geom
 src/CMakeFiles/skinning.dir/requires: src/CMakeFiles/skinning.dir/main.cc.o.requires
 src/CMakeFiles/skinning.dir/requires: src/CMakeFiles/skinning.dir/gui.cc.o.requires
 src/CMakeFiles/skinning.dir/requires: src/CMakeFiles/skinning.dir/bone_geometry.cc.o.requires
+src/CMakeFiles/skinning.dir/requires: src/CMakeFiles/skinning.dir/pngimage.cpp.o.requires
 .PHONY : src/CMakeFiles/skinning.dir/requires
 
 src/CMakeFiles/skinning.dir/clean:

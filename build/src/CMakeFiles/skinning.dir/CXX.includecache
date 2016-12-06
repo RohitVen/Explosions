@@ -117,6 +117,8 @@ config.h
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/config.h
 gui.h
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/gui.h
+pngimage.h
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/pngimage.h
 algorithm
 -
 fstream
@@ -126,6 +128,10 @@ iostream
 string
 -
 vector
+-
+stdio.h
+-
+stdlib.h
 -
 glm/gtx/component_wise.hpp
 -
@@ -147,6 +153,16 @@ shaders/default.frag
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shaders/default.frag
 shaders/floor.frag
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shaders/floor.frag
+
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/pngimage.h
+stdio.h
+-
+stdlib.h
+-
+zlib.h
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/zlib.h
+png.h
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/png.h
 
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/procedure_geometry.h
 vector

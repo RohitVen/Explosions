@@ -7,6 +7,7 @@ SET(CMAKE_DEPENDS_CHECK_CXX
   "/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/bone_geometry.cc" "/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/build/src/CMakeFiles/skinning.dir/bone_geometry.cc.o"
   "/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/gui.cc" "/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/build/src/CMakeFiles/skinning.dir/gui.cc.o"
   "/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/main.cc" "/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/build/src/CMakeFiles/skinning.dir/main.cc.o"
+  "/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/pngimage.cpp" "/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/build/src/CMakeFiles/skinning.dir/pngimage.cpp.o"
   "/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/procedure_geometry.cc" "/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/build/src/CMakeFiles/skinning.dir/procedure_geometry.cc.o"
   "/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/render_pass.cc" "/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/build/src/CMakeFiles/skinning.dir/render_pass.cc.o"
   )

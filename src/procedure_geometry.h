@@ -11,6 +11,7 @@ void create_floor(std::vector<glm::vec4>& floor_vertices, std::vector<glm::uvec3
 
 void create_bones(std::vector<glm::vec4>& bone_vertices, std::vector<glm::uvec2>& bone_faces, Mesh &m);
 void create_cylinder(std::vector<glm::vec4>& cyl_vertices, std::vector<glm::uvec2>& cyl_faces, Mesh &m, int bone);
+void create_bill(std::vector<glm::vec4>& bill_vertices, std::vector<glm::uvec3>& bill_faces);
 // FIXME: Add functions to generate the bone mesh.
 
 #endif

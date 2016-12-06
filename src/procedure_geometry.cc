@@ -14,6 +14,16 @@ void create_floor(std::vector<glm::vec4>& floor_vertices, std::vector<glm::uvec3
 	floor_faces.push_back(glm::uvec3(2, 3, 0));
 }
 
+void create_bill(std::vector<glm::vec4>& bill_vertices, std::vector<glm::uvec3>& bill_faces)
+{
+	bill_vertices.push_back(glm::vec4(-5.0, 5.0, 1.0, 1.0));
+	bill_vertices.push_back(glm::vec4(5.0, 5.0, 1.0, 1.0));
+	bill_vertices.push_back(glm::vec4(5.0, 0.0, 1.0, 1.0));
+	bill_vertices.push_back(glm::vec4(-5.0, 0.0, 1.0f, 1.0));
+	bill_faces.push_back(glm::uvec3(1,0,2));
+	bill_faces.push_back(glm::uvec3(2,0,3));
+}
+
 void create_bones(std::vector<glm::vec4>& bone_vertices, std::vector<glm::uvec2>& bone_faces, Mesh &m)
 {
 	int src;
