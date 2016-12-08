@@ -1,3 +1,4 @@
+#include "../../soil/src/SOIL.h"
 #include <GL/glew.h>
 #include <dirent.h>
 
@@ -105,7 +106,7 @@ uniform mat4 projection;
 uniform mat4 view;
 in vec4 position;
 in vec2 uv;
-out vec2 uv_vert;
+out vec2 uv_coords;
 
 void main()
 {
@@ -115,19 +116,19 @@ void main()
 	vec4 cam_r = vec4(view[0][0], view[1][0], view[2][0], view[3][0]);
 	vec4 p = center + cam_r * position.x * 100 + cam_up * position.y * 100;
 	gl_Position = projection * view * p;
-	uv_vert = uv;
+	uv_coords = uv;
 }
 )zzz";
 
 const char* tex_fragment_shader =
 R"zzz(#version 330 core
-in vec2 uv_vert;
+in vec2 uv_coords;
 out vec4 color;
-uniform sample2D t;
+uniform sampler2D textureSampler;
 
 void main()
 {
-	color = texture(t, uv);
+	color = texture(textureSampler, uv_coords);
 }
 )zzz";
 
@@ -160,7 +161,7 @@ GLFWwindow* init_glefw()
 	return ret;
 }
 
-void loadPNG( std::string filename, std::vector<unsigned char> &data ) 
+GLuint loadPNG( std::string filename, std::vector<unsigned char> &data ) 
 {
 	int start = (int) filename.find_last_of('.');
 	int end = (int) filename.size() - 1;
@@ -338,24 +339,124 @@ int main(int argc, char* argv[])
 
 
 	//Start Texture Code//
-	std::string filename = "../assets/cloud_smoke_textures/Could and Smoke Textures/cloud_14.png";
-	std::vector<unsigned char> data;
-	std::cout<<"\ndata size: "<<data.size();
-	loadPNG(filename, data); 
-	std::cout<<"\ndata size after loading: "<<data.size()<<"\n";
+	GLuint vao;
+	GLuint vbo;
+	glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+    glGenBuffers(1, &vbo);
+
+    GLfloat vertices[] = {
+    //  Position      UV coords
+    -0.5f,  0.5f,    0.0f, 0.0f, // Top-left
+     0.5f,  0.5f,    1.0f, 0.0f, // Top-right
+     0.5f, -0.5f,    1.0f, 1.0f, // Bottom-right
+    -0.5f, -0.5f,    0.0f, 1.0f  // Bottom-left
+    };
+
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    // Create an element array
+    GLuint ebo;
+    glGenBuffers(1, &ebo);
+
+    GLuint elements[] = {
+        0, 1, 2,
+        2, 3, 0
+    };
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
+
+    // Create and compile the vertex shader
+    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &tex_vertex_shader, NULL);
+    glCompileShader(vertexShader);
+
+     // Create and compile the fragment shader
+    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &tex_fragment_shader, NULL);
+    glCompileShader(fragmentShader);
+
+    // Link the vertex and fragment shader into a shader program
+    GLuint shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glBindFragDataLocation(shaderProgram, 0, "color");
+    glLinkProgram(shaderProgram);
+    glUseProgram(shaderProgram);
+
+    // Specify the layout of the vertex data
+    GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
+    glEnableVertexAttribArray(posAttrib);
+    glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 0);
+
+    GLint texAttrib = glGetAttribLocation(shaderProgram, "uv");
+    glEnableVertexAttribArray(texAttrib);
+    glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (void*)(5 * sizeof(GLfloat)));
+
+     // Load textures
+    GLuint textures[1];
+    glGenTextures(1, textures);
+
+    int width, height;
+    unsigned char* data;
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, textures[0]);
+    data = SOIL_load_image("/u/rohitven/Desktop/CS354/A4/explosions/assets/cloud_smoke_textures/Cloud and Smoke Textures/cloud_14.png", &width, &height, 0, SOIL_LOAD_RGB);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    SOIL_free_image_data(data);
+
+    glUniform1i(glGetUniformLocation(shaderProgram, "textureSampler"), 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
+
+
+
+
+	// std::string filename = "/u/rohitven/Desktop/CS354/A4/explosions/assets/cloud_smoke_textures/Cloud and Smoke Textures/cloud_14.png";
+	// std::vector<unsigned char> data;
+	// GLuint texture = loadPNG(filename, data); 
 
 	// std::vector<glm::vec2> tex_uv;
 
+	// tex_uv.push_back(glm::vec2(0,0));
+	// tex_uv.push_back(glm::vec2(1,0));
+	// tex_uv.push_back(glm::vec2(1,1));
+	// tex_uv.push_back(glm::vec2(1,1));
+	// tex_uv.push_back(glm::vec2(0,1));
+	// tex_uv.push_back(glm::vec2(0,0));
+
+	// GLuint tex;
+	// CHECK_GL_ERROR(glGenTextures(1, &tex));
+	// glBindTexture(GL_TEXTURE_2D, tex);
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// glGenerateMipmap(GL_TEXTURE_2D);
+	// glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, window_width, window_height, 0, GL_RBG, GL_UNSIGNED_BYTE, data);
+	// float pixels[] = {
+ //    0.0f, 0.0f, 0.0f,   1.0f, 1.0f, 1.0f,
+ //    1.0f, 1.0f, 1.0f,   0.0f, 0.0f, 0.0f
+	// };
+	// glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_RGB, GL_FLOAT, pixels);
+
+
+
 	// RenderDataInput tex_pass_input;
-		// tex_pass_input.assign(0, "vertex_position", bill_vertices.data(), bill_vertices.size(), 4, GL_FLOAT);
-		// tex_pass_input.assign(1, "uv", tex_uv.data(), tex_uv.size(), 2, GL_FLOAT);
-		// tex_pass_input.assign_index(bill_faces.data(), bill_faces.size(), 3);
-		// RenderPass tex_pass(-1,
-		// 		tex_pass_input,
-		// 		{ tex_vertex_shader, nullptr, tex_fragment_shader},
-		// 		{ std_model, std_view, std_proj},
-		// 		{ "color" }
-		// 		);
+	// 	tex_pass_input.assign(0, "vertex_position", bill_vertices.data(), bill_vertices.size(), 4, GL_FLOAT);
+	// 	tex_pass_input.assign(1, "uv", tex_uv.data(), tex_uv.size(), 2, GL_FLOAT);
+	// 	tex_pass_input.assign_index(bill_faces.data(), bill_faces.size(), 3);
+	// 	RenderPass tex_pass(-1,
+	// 			tex_pass_input,
+	// 			{ tex_vertex_shader, nullptr, fragment_shader},
+	// 			{ std_model, std_view, std_proj},
+	// 			{ "fragment color" }
+	// 			);
 	//End Texture Code//
 
 
@@ -431,7 +532,7 @@ int main(int argc, char* argv[])
 			// std::cout<<"\nDraw the bill!";
 			bill_pass.setup();
 			// tex_pass.setup();
-			// CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, tex_faces.size() * 3, GL_UNSIGNED_INT, 0));
+			// CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, tex_uv.size() * 2, GL_UNSIGNED_INT, 0));
 			CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, bill_faces.size() * 3, GL_UNSIGNED_INT, 0));
 		}
 

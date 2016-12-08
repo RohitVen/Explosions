@@ -35,6 +35,7 @@ src/CMakeFiles/skinning.dir/main.cc.o: ../src/shaders/default.frag
 src/CMakeFiles/skinning.dir/main.cc.o: ../src/shaders/default.geom
 src/CMakeFiles/skinning.dir/main.cc.o: ../src/shaders/default.vert
 src/CMakeFiles/skinning.dir/main.cc.o: ../src/shaders/floor.frag
+src/CMakeFiles/skinning.dir/main.cc.o: /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/soil/src/SOIL.h
 
 src/CMakeFiles/skinning.dir/pngimage.cpp.o: ../src/pngimage.cpp
 src/CMakeFiles/skinning.dir/pngimage.cpp.o: ../src/pngimage.h

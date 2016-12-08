@@ -103,6 +103,8 @@ GLFW/glfw3.h
 -
 
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/main.cc
+../../soil/src/SOIL.h
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/soil/src/SOIL.h
 GL/glew.h
 -
 dirent.h
@@ -191,4 +193,6 @@ material.h
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shaders/default.vert
 
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shaders/floor.frag
+
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/soil/src/SOIL.h
 
