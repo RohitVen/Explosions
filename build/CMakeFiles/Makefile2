@@ -62,7 +62,7 @@ CMAKE_BINARY_DIR = /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/build
 CMakeFiles/utgraphicsutil.dir/all:
 	$(MAKE) -f CMakeFiles/utgraphicsutil.dir/build.make CMakeFiles/utgraphicsutil.dir/depend
 	$(MAKE) -f CMakeFiles/utgraphicsutil.dir/build.make CMakeFiles/utgraphicsutil.dir/build
-	$(CMAKE_COMMAND) -E cmake_progress_report /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/build/CMakeFiles  7 8 9 10
+	$(CMAKE_COMMAND) -E cmake_progress_report /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/build/CMakeFiles  6 7 8 9
 	@echo "Built target utgraphicsutil"
 .PHONY : CMakeFiles/utgraphicsutil.dir/all
 
@@ -112,7 +112,7 @@ src/preinstall:
 src/CMakeFiles/skinning.dir/all: CMakeFiles/utgraphicsutil.dir/all
 	$(MAKE) -f src/CMakeFiles/skinning.dir/build.make src/CMakeFiles/skinning.dir/depend
 	$(MAKE) -f src/CMakeFiles/skinning.dir/build.make src/CMakeFiles/skinning.dir/build
-	$(CMAKE_COMMAND) -E cmake_progress_report /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/build/CMakeFiles  1 2 3 4 5 6
+	$(CMAKE_COMMAND) -E cmake_progress_report /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/build/CMakeFiles  1 2 3 4 5
 	@echo "Built target skinning"
 .PHONY : src/CMakeFiles/skinning.dir/all
 
@@ -122,7 +122,7 @@ all: src/CMakeFiles/skinning.dir/all
 
 # Build rule for subdir invocation for target.
 src/CMakeFiles/skinning.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/build/CMakeFiles 10
+	$(CMAKE_COMMAND) -E cmake_progress_start /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/build/CMakeFiles 9
 	$(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/skinning.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/build/CMakeFiles 0
 .PHONY : src/CMakeFiles/skinning.dir/rule

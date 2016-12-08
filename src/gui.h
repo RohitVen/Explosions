@@ -40,10 +40,6 @@ public:
 	bool setCurrentBone(int i);
 
 	bool isTransparent() const { return transparent_; }
-
-	glm::vec3 ScreenToWorld(double x, double y, glm::uvec4 viewport);
-	glm::mat4 view_matrix_ = glm::lookAt(eye_, center_, up_);
-	glm::mat4 projection_matrix_;
 private:
 	GLFWwindow* window_;
 	Mesh* mesh_;
@@ -72,6 +68,8 @@ private:
 	glm::mat3 orientation_ = glm::mat3(tangent_, up_, look_);
 	glm::vec4 light_position_;
 
+	glm::mat4 view_matrix_ = glm::lookAt(eye_, center_, up_);
+	glm::mat4 projection_matrix_;
 	glm::mat4 model_matrix_ = glm::mat4(1.0f);
 
 	bool captureWASDUPDOWN(int key, int action);

@@ -4,7 +4,6 @@ FILE(REMOVE_RECURSE
   "CMakeFiles/skinning.dir/main.cc.o"
   "CMakeFiles/skinning.dir/gui.cc.o"
   "CMakeFiles/skinning.dir/bone_geometry.cc.o"
-  "CMakeFiles/skinning.dir/pngimage.cpp.o"
   "../bin/skinning.pdb"
   "../bin/skinning"
 )

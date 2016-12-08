@@ -1,8 +1,6 @@
 #include "procedure_geometry.h"
 #include "bone_geometry.h"
 #include "config.h"
-#include <iostream>
-#include <cmath>
 
 void create_floor(std::vector<glm::vec4>& floor_vertices, std::vector<glm::uvec3>& floor_faces)
 {
@@ -22,67 +20,6 @@ void create_bill(std::vector<glm::vec4>& bill_vertices, std::vector<glm::uvec3>&
 	bill_vertices.push_back(glm::vec4(-5.0, 0.0, 1.0f, 1.0));
 	bill_faces.push_back(glm::uvec3(1,0,2));
 	bill_faces.push_back(glm::uvec3(2,0,3));
-}
-
-void create_bones(std::vector<glm::vec4>& bone_vertices, std::vector<glm::uvec2>& bone_faces, Mesh &m)
-{
-	int src;
-	int dest;
-	Bone b;
-	Joint j;
-	for(int i = 0; i < m.skeleton.bones.size(); i++)
-	{
-		b = m.skeleton.bones[i];
-		bone_vertices.push_back(glm::vec4(b.start,1));
-		bone_vertices.push_back(glm::vec4(b.end,1));
-
-	}
-
-	for(int i = 0; i < 2*m.skeleton.bones.size(); i = i+2)
-	{
-		bone_faces.push_back(glm::uvec2(i,i+1));
-	}
-}
-
-void create_cylinder(std::vector<glm::vec4>& cyl_vertices, std::vector<glm::uvec2>& cyl_faces, Mesh &m, int bone)
-{
-	double radius = kCylinderRadius;
-	double toRad = M_PI/180;
-	double deg = 0;
-	int ind = 0;
-	int num = 0;
-	Bone b = m.skeleton.bones[bone];
-	double len = b.length;
-	while(deg < 360)
-	{
-		double rad = deg * toRad;
-		cyl_vertices.push_back(b.coords*(glm::vec4(0, radius*cos(rad), radius*sin(rad), 1)));
-		deg += 45;
-		rad = deg * toRad;
-		cyl_vertices.push_back(b.coords*(glm::vec4(0, radius*cos(rad), radius*sin(rad), 1)));
-	}
-	deg = 0;
-	while(deg < 360)
-	{
-		double rad = deg * toRad;
-		cyl_vertices.push_back(b.coords*(glm::vec4(len, radius*cos(rad), radius*sin(rad), 1)));
-		deg += 45;
-		rad = deg * toRad;
-		cyl_vertices.push_back(b.coords*(glm::vec4(len, radius*cos(rad), radius*sin(rad), 1)));
-	}
-	deg = 0;
-	while(deg < 360)
-	{
-		double rad = deg * toRad;
-		cyl_vertices.push_back(b.coords*(glm::vec4(0, radius*cos(rad), radius*sin(rad), 1)));
-		cyl_vertices.push_back(b.coords*(glm::vec4(len, radius*cos(rad), radius*sin(rad), 1)));
-		deg += 45;
-	}
-	while(ind < 48)
-	{
-		cyl_faces.push_back(glm::uvec2(ind, ind+1));
-		ind += 2;	
-	}
 }
 
 // FIXME: create cylinders and lines for the bones

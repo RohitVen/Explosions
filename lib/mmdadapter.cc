@@ -92,11 +92,6 @@ public:
 		return true;
 	}
 
-	int GetNumBones()
-	{
-		return model_.GetBoneNum();
-	}
-
 	void getMesh(std::vector<glm::vec4>& V,
 		     std::vector<glm::uvec3>& F,
 		     std::vector<glm::vec4>& N,
@@ -167,9 +162,7 @@ public:
 	bool getJoint(int useful_bone_id, glm::vec3& offset, int& parent)
 	{
 		if (useful_bone_id >= int(useful_bone_to_pmd_bone_.size()) || useful_bone_id < 0)
-		{
 			return false;
-		}
 		int id = useful_bone_to_pmd_bone_[useful_bone_id];
 		const auto& bone = model_.GetBone(id);
 		size_t mmd_parent = bone.GetParentIndex();
@@ -251,7 +244,6 @@ public:
 			//std::cerr << bdef2.GetBoneID(0) << "\t" << bdef2.GetBoneID(1) << "\t" << bdef2.GetBoneWeight() << endl;
 		}
 	}
-
 private:
 	mmd::Model model_;
 	std::unordered_map<int, int> useful_bone_to_pmd_bone_, pmd_bone_to_useful_bone_;
@@ -269,11 +261,6 @@ MMDReader::~MMDReader()
 bool MMDReader::open(const std::string& fn)
 {
 	return d_->open(fn);
-}
-
-int MMDReader::GetNumBones()
-{
-	return d_->GetNumBones();
 }
 
 void MMDReader::getMesh(std::vector<glm::vec4>& V,
@@ -298,5 +285,3 @@ void MMDReader::getJointWeights(std::vector<SparseTuple>& tup)
 {
 	d_->getJointWeights(tup);
 }
-
-

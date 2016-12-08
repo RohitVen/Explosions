@@ -187,30 +187,6 @@ main.cc.s:
 	cd /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/build && $(MAKE) -f src/CMakeFiles/skinning.dir/build.make src/CMakeFiles/skinning.dir/main.cc.s
 .PHONY : main.cc.s
 
-pngimage.o: pngimage.cpp.o
-.PHONY : pngimage.o
-
-# target to build an object file
-pngimage.cpp.o:
-	cd /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/build && $(MAKE) -f src/CMakeFiles/skinning.dir/build.make src/CMakeFiles/skinning.dir/pngimage.cpp.o
-.PHONY : pngimage.cpp.o
-
-pngimage.i: pngimage.cpp.i
-.PHONY : pngimage.i
-
-# target to preprocess a source file
-pngimage.cpp.i:
-	cd /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/build && $(MAKE) -f src/CMakeFiles/skinning.dir/build.make src/CMakeFiles/skinning.dir/pngimage.cpp.i
-.PHONY : pngimage.cpp.i
-
-pngimage.s: pngimage.cpp.s
-.PHONY : pngimage.s
-
-# target to generate assembly for a file
-pngimage.cpp.s:
-	cd /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/build && $(MAKE) -f src/CMakeFiles/skinning.dir/build.make src/CMakeFiles/skinning.dir/pngimage.cpp.s
-.PHONY : pngimage.cpp.s
-
 procedure_geometry.o: procedure_geometry.cc.o
 .PHONY : procedure_geometry.o
 
@@ -277,9 +253,6 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
-	@echo "... pngimage.o"
-	@echo "... pngimage.i"
-	@echo "... pngimage.s"
 	@echo "... procedure_geometry.o"
 	@echo "... procedure_geometry.i"
 	@echo "... procedure_geometry.s"

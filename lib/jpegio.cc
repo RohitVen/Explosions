@@ -2,7 +2,6 @@
 #include <vector>
 #include <jpeglib.h>
 #include <stdio.h>
-#include <iostream>
 
 bool SaveJPEG(const std::string& filename,
               int image_width,
@@ -14,6 +13,7 @@ bool SaveJPEG(const std::string& filename,
 	FILE* outfile;
 	JSAMPROW row_pointer[1];
 	int row_stride;
+
 	cinfo.err = jpeg_std_error(&jerr);
 	jpeg_create_compress(&cinfo);
 
