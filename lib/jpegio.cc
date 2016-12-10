@@ -2,6 +2,7 @@
 #include <vector>
 #include <jpeglib.h>
 #include <stdio.h>
+#include <iostream>
 
 bool SaveJPEG(const std::string& filename,
               int image_width,
@@ -56,7 +57,10 @@ bool LoadJPEG(const std::string& file_name, Image* image)
 	jpeg_create_decompress(&info);
 
 	if (file == NULL)
+	{
+		std::cout<<"\nNULL FILE!!!";
 		return false;
+	}
 
 	jpeg_stdio_src(&info, file);
 	jpeg_read_header(&info, true);

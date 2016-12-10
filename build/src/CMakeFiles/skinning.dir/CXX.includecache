@@ -8,16 +8,6 @@
 
 ../lib/debuggl.h
 
-../lib/image.h
-vector
--
-
-../lib/jpegio.h
-string
--
-image.h
-../lib/image.h
-
 ../lib/material.h
 image.h
 ../lib/image.h
@@ -76,21 +66,15 @@ GL/glext.h
 GL/glu.h
 -
 
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/bone_geometry.cc
-config.h
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/config.h
-bone_geometry.h
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/bone_geometry.h
-fstream
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/lib/image.h
+vector
 -
-iostream
+
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/lib/jpegio.h
+string
 -
-stdexcept
--
-glm/gtx/io.hpp
--
-glm/gtx/transform.hpp
--
+image.h
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/lib/image.h
 
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/bone_geometry.h
 ostream
@@ -107,26 +91,6 @@ mmdadapter.h
 -
 
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/config.h
-
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/gui.cc
-gui.h
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/gui.h
-config.h
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/config.h
-jpegio.h
--
-bone_geometry.h
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/bone_geometry.h
-iostream
--
-debuggl.h
--
-glm/gtc/matrix_access.hpp
--
-glm/gtc/matrix_transform.hpp
--
-glm/gtx/transform.hpp
--
 
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/gui.h
 glm/glm.hpp
@@ -151,6 +115,12 @@ config.h
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/config.h
 gui.h
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/gui.h
+../lib/jpegio.h
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/lib/jpegio.h
+../lib/image.h
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/lib/image.h
+shader.h
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shader.h
 algorithm
 -
 fstream
@@ -171,6 +141,8 @@ glm/gtx/io.hpp
 -
 debuggl.h
 -
+cmath
+-
 shaders/default.vert
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shaders/default.vert
 shaders/default.geom
@@ -183,32 +155,16 @@ shaders/bill.vert
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shaders/bill.vert
 shaders/bill.frag
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shaders/bill.frag
-
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/procedure_geometry.cc
-procedure_geometry.h
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/procedure_geometry.h
-bone_geometry.h
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/bone_geometry.h
-config.h
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/config.h
+shaders/tex.frag
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shaders/tex.frag
 
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/procedure_geometry.h
 vector
 -
 glm/glm.hpp
 -
-
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/render_pass.cc
-GL/glew.h
--
-render_pass.h
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/render_pass.h
-iostream
--
-debuggl.h
--
-map
--
+gui.h
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/gui.h
 
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/render_pass.h
 vector
@@ -222,6 +178,18 @@ functional
 material.h
 -
 
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shader.h
+GL/glew.h
+-
+string
+-
+fstream
+-
+sstream
+-
+iostream
+-
+
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shaders/bill.frag
 
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shaders/bill.vert
@@ -233,4 +201,6 @@ material.h
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shaders/default.vert
 
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shaders/floor.frag
+
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shaders/tex.frag
 

@@ -21,6 +21,26 @@ src/CMakeFiles/skinning.dir/gui.cc.o
  /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/gui.h
 src/CMakeFiles/skinning.dir/main.cc.o
  ../lib/debuggl.h
+ ../lib/material.h
+ ../lib/mmdadapter.h
+ /lusr/opt/glfw-3.2/include/GLFW/glfw3.h
+ /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/lib/image.h
+ /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/lib/jpegio.h
+ /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/bone_geometry.h
+ /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/config.h
+ /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/gui.h
+ /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/main.cc
+ /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/procedure_geometry.h
+ /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/render_pass.h
+ /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shader.h
+ /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shaders/bill.frag
+ /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shaders/bill.vert
+ /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shaders/default.frag
+ /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shaders/default.geom
+ /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shaders/default.vert
+ /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shaders/floor.frag
+ /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shaders/tex.frag
+src/CMakeFiles/skinning.dir/procedure_geometry.cc.o
  ../lib/image.h
  ../lib/material.h
  ../lib/mmdadapter.h
@@ -28,21 +48,6 @@ src/CMakeFiles/skinning.dir/main.cc.o
  /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/bone_geometry.h
  /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/config.h
  /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/gui.h
- /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/main.cc
- /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/procedure_geometry.h
- /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/render_pass.h
- /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shaders/bill.frag
- /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shaders/bill.vert
- /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shaders/default.frag
- /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shaders/default.geom
- /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shaders/default.vert
- /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shaders/floor.frag
-src/CMakeFiles/skinning.dir/procedure_geometry.cc.o
- ../lib/image.h
- ../lib/material.h
- ../lib/mmdadapter.h
- /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/bone_geometry.h
- /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/config.h
  /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/procedure_geometry.cc
  /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/procedure_geometry.h
 src/CMakeFiles/skinning.dir/render_pass.cc.o
