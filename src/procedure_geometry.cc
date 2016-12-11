@@ -25,10 +25,10 @@ void create_bill(GUI *g, std::vector<glm::vec4>& bill_vertices, std::vector<glm:
 	{
 		glm::vec4 t = bill_center[i];
 		// t = g->projection_matrix_ * g->view_matrix_ * t;
-		// glm::vec4 t1 = glm::vec4(t.x-1,t.y+1,1.0,1.0);
-		// glm::vec4 t2 = glm::vec4(t.x+1,t.y+1,1.0,1.0);
-		// glm::vec4 t3 = glm::vec4(t.x+1,t.y-1,1.0,1.0);
-		// glm::vec4 t4 = glm::vec4(t.x-1,t.y-1,1.0,1.0);
+		// glm::vec4 t1 = glm::vec4(-0.5,0.5,1.0,1.0);
+		// glm::vec4 t2 = glm::vec4(0.5,0.5,1.0,1.0);
+		// glm::vec4 t3 = glm::vec4(0.5,-0.5,1.0,1.0);
+		// glm::vec4 t4 = glm::vec4(-0.5,-0.5,1.0,1.0);
 		glm::vec4 tang = glm::vec4(g->view_matrix_[0][0],g->view_matrix_[1][0],g->view_matrix_[2][0],0);
 		glm::vec4 up = glm::vec4(g->view_matrix_[0][1],g->view_matrix_[1][1],g->view_matrix_[2][1],0);
 		glm::vec3 center = g->getCamera();
@@ -79,11 +79,6 @@ void create_bill(GUI *g, std::vector<glm::vec4>& bill_vertices, std::vector<glm:
 		bill_vertices.push_back(t2);  //Top right
 		bill_vertices.push_back(t3);  //Bottom right
 		bill_vertices.push_back(t4);  //Bottom left
-
-		// bill_vertices.push_back(glm::vec4(0,1,0,0));
-		// bill_vertices.push_back(glm::vec4(1,1,0,0));
-		// bill_vertices.push_back(glm::vec4(1,0,0,0));
-		// bill_vertices.push_back(glm::vec4(0,0,0,0));
 
 		bill_faces.push_back(glm::uvec3(index+1,index,index+2));
 		bill_faces.push_back(glm::uvec3(index+2,index,index+3));

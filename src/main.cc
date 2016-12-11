@@ -250,6 +250,10 @@ int main(int argc, char* argv[])
 	std::vector<glm::uvec3> bill_faces;
 	std::vector<glm::vec4> bill_center;
 	std::vector<glm::vec2> bill_uv;
+	for(int i = 0; i < bill_uv.size(); i++)
+	{
+		std::cout<<"\nSHOULD NOT GET IN HERE!!";
+	}
 	std::vector<glm::mat4> transforms;
 	glm::vec3 eye = gui.getCamera();
 	gui.updateMatrices();
@@ -258,7 +262,7 @@ int main(int argc, char* argv[])
 	double deg = 0;
 	float scale = 1;
 	float rot = 0.5;
-	bill_center.push_back(glm::vec4(0,2.5,0,1));
+	bill_center.push_back(glm::vec4(0,0,0,1));
 
 	// Following code developed using online tutorial
 	unsigned char *data;
@@ -286,25 +290,15 @@ int main(int argc, char* argv[])
 	std::cout<<"\nwidth: "<<width<<" "<<u2<<" "<<u3;
 	std::cout<<"\nheight: "<<height<<" "<<v2<<" "<<v3;
 
-	// bill_uv.push_back(glm::vec2(0,1));
-	// bill_uv.push_back(glm::vec2(1,1));
-	// bill_uv.push_back(glm::vec2(1,0));
-	// bill_uv.push_back(glm::vec2(0,0));
-	// bill_uv.push_back(glm::vec2(1,0));
-	// bill_uv.push_back(glm::vec2(1,1));
+	bill_uv.push_back(glm::vec2(1,1));
+	bill_uv.push_back(glm::vec2(1,0));
+	bill_uv.push_back(glm::vec2(0,0));
+	bill_uv.push_back(glm::vec2(0,1));
 
-	// while(deg < 360)
-	// {
-	// 	double rad = deg * toRad;
-	// 	bill_center.push_back((glm::vec4(radius*cos(rad), 2.5+radius*sin(rad), 0, 1)));
-	// 	deg += 45;
-	// 	if(deg < 360)
-	// 	{
-	// 		rad = deg * toRad;
-	// 		bill_center.push_back((glm::vec4(radius*cos(rad), 2.5+radius*sin(rad), 0, 1)));
-	// 	}	
-	// }
-	create_bill(&gui, bill_vertices, bill_faces, bill_center, scale, rot);
+	bill_uv.push_back(glm::vec2(0,0));
+	bill_uv.push_back(glm::vec2(0,0));
+
+	// create_bill(&gui, bill_vertices, bill_faces, bill_center, scale, rot);
 
 	//End Billboard Code//
 
@@ -336,7 +330,7 @@ int main(int argc, char* argv[])
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float)* 4 * bill_vertices.size(), bill_vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float)* 4 * bill_vertices.size(), nullptr, GL_STATIC_DRAW);
 
     // Position attribute
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
@@ -348,11 +342,11 @@ int main(int argc, char* argv[])
     glBufferData(GL_ARRAY_BUFFER, sizeof(float)* 2 * bill_uv.size(), bill_uv.data(), GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(2);
 	CHECK_GL_ERROR(glBindAttribLocation(sp_, 0, "uv"));
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float)* 3 * bill_faces.size(), bill_faces.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float)* 3 * bill_faces.size(), nullptr, GL_STATIC_DRAW);
     
     CHECK_GL_ERROR(glBindFragDataLocation(sp_, 0, "color"));
 
@@ -380,8 +374,8 @@ int main(int argc, char* argv[])
     glGenTextures(1, &texture1);
     glBindTexture(GL_TEXTURE_2D, texture1); // All upcoming GL_TEXTURE_2D operations now have effect on our texture object
     // Set our texture parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);	// Set texture wrapping to GL_REPEAT
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);	// Set texture wrapping to GL_REPEAT
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
     std::cout<<"\nSet texture parameters!";
     // Set texture filtering
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -445,6 +439,7 @@ int main(int argc, char* argv[])
 
 			bill_vertices.clear();
 			bill_faces.clear();
+			bill_uv.clear();
 			scale = gui.scale;
 			rot = gui.rot;
 			rot = rot * toRad;
@@ -457,6 +452,9 @@ int main(int argc, char* argv[])
 		    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
 		    glEnableVertexAttribArray(0);
 			CHECK_GL_ERROR(glBindAttribLocation(sp_, 0, "position"));
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float)* 3 * bill_faces.size(), bill_faces.data(), GL_STATIC_DRAW);
 		    
 		    CHECK_GL_ERROR(glBindFragDataLocation(sp_, 0, "color"));
 
