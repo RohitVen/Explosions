@@ -1,4 +1,6 @@
 #include <GL/glew.h>
+#include <SDL/SDL.h>
+#include <GL/gl.h>
 #include <dirent.h>
 
 #include "bone_geometry.h"
@@ -8,7 +10,7 @@
 #include "gui.h"
 #include "../lib/jpegio.h"
 #include "../lib/image.h"
-#include "shader.h"
+#include "../lib/lodepng.h"
 
 #include <algorithm>
 #include <fstream>
@@ -229,6 +231,16 @@ int main(int argc, char* argv[])
 			{ "fragment_color" }
 			);
 
+	RenderDataInput floor_pass_input;
+	floor_pass_input.assign(0, "vertex_position", floor_vertices.data(), floor_vertices.size(), 4, GL_FLOAT);	
+	floor_pass_input.assign_index(floor_faces.data(), floor_faces.size(), 3);
+	RenderPass floor_pass(-1,
+			floor_pass_input,
+			{ vertex_shader, geometry_shader, floor_fragment_shader},
+			{ floor_model, std_view, std_proj, std_light },
+			{ "fragment_color" }
+			);
+
 	// FIXME: Create the RenderPass objects for bones here.
 	//        Otherwise do whatever you like.
 
@@ -237,6 +249,7 @@ int main(int argc, char* argv[])
 	std::vector<glm::vec4> bill_vertices;
 	std::vector<glm::uvec3> bill_faces;
 	std::vector<glm::vec4> bill_center;
+	std::vector<glm::vec2> bill_uv;
 	std::vector<glm::mat4> transforms;
 	glm::vec3 eye = gui.getCamera();
 	gui.updateMatrices();
@@ -246,7 +259,15 @@ int main(int argc, char* argv[])
 	float scale = 1;
 	float rot = 0.5;
 	bill_center.push_back(glm::vec4(0,2.5,0,1));
-	bill_center.push_back(glm::vec4(0,5.0,0,1));
+	bill_center.push_back(glm::vec4(0,5.0,7.0,1));
+	bill_uv.push_back(glm::vec2(1,1));
+	bill_uv.push_back(glm::vec2(1,0));
+	bill_uv.push_back(glm::vec2(0,0));
+	bill_uv.push_back(glm::vec2(0,1));
+	bill_uv.push_back(glm::vec2(1,1));
+	bill_uv.push_back(glm::vec2(1,0));
+	bill_uv.push_back(glm::vec2(0,0));
+	bill_uv.push_back(glm::vec2(0,1));
 	// while(deg < 360)
 	// {
 	// 	double rad = deg * toRad;
@@ -260,60 +281,16 @@ int main(int argc, char* argv[])
 	// }
 	create_bill(&gui, bill_vertices, bill_faces, bill_center, scale, rot);
 
-	RenderDataInput bill_pass_input;
-	bill_pass_input.assign(0, "vertex_position", bill_vertices.data(), bill_vertices.size(), 4, GL_FLOAT);
-	bill_pass_input.assign(1, "center", bill_center.data(), bill_center.size(), 1, GL_FLOAT);
-	bill_pass_input.assign_index(bill_faces.data(), bill_faces.size(), 3);
-	RenderPass bill_pass(-1,
-			bill_pass_input,
-			{ bill_vertex_shader, nullptr, bill_fragment_shader},
-			{ std_model, std_view, std_proj},
-			{ "color" }
-			);
-
 	//End Billboard Code//
 
 
 	//Start Texture Code//
 
-	// std::vector<glm::vec2> tex_uv;
-	// tex_uv.push_back(glm::vec2(1.0f, 1.0f));
-	// tex_uv.push_back(glm::vec2(0.0f, 1.0f));
-	// tex_uv.push_back(glm::vec2(0.0f, 0.0f));
-	// tex_uv.push_back(glm::vec2(1.0f, 1.0f));
-	// tex_uv.push_back(glm::vec2(0.0f, 0.0f));
-	// tex_uv.push_back(glm::vec2(1.0f, 0.0f));
-
-	// RenderDataInput tex_pass_input;
-	// tex_pass_input.assign(0, "vertex_position", bill_vertices.data(), bill_vertices.size(), 4, GL_FLOAT);
-	// tex_pass_input.assign(1, "uv", tex_uv.data(), tex_uv.size(), 2, GL_FLOAT);
-	// tex_pass_input.assign_index(bill_faces.data(), bill_faces.size(), 3);
-	// RenderPass tex_pass(-1,
-	// 		tex_pass_input,
-	// 		{ bill_vertex_shader, nullptr, tex_fragment_shader},
-	// 		{ std_model, std_view, std_proj},
-	// 		{ "color" }
-	// 		);
-
 	// Set up vertex data (and buffer(s)) and attribute pointers
-    GLfloat vertices[] = {
-        // Positions          // Colors           // Texture Coords
-         5.0f,  5.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // Top Right
-         5.0f, -5.0f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // Bottom Right
-        -5.0f, -5.0f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // Bottom Left
-        -5.0f,  5.0f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // Top Left 
-    };
-
-    GLuint indices[] = {  // Note that we start from 0!
-        1, 0, 2, // First Triangle
-        2, 0, 3  // Second Triangle
-    };
-
-	GLuint VBO, VAO, EBO;
+	GLuint VBO, VAO, EBO, UVO;
     glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
 
-    const std::vector<const char*> shaders = { bill_vertex_shader, nullptr, bill_fragment_shader};
+    const std::vector<const char*> shaders = { bill_vertex_shader, nullptr, tex_fragment_shader};
 	unsigned sampler2d_;
 	unsigned vs_ = 0, gs_ = 0, fs_ = 0;
 	unsigned sp_ = 0;
@@ -329,7 +306,9 @@ int main(int argc, char* argv[])
 		glAttachShader(sp_, gs_);
 
 	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &UVO);
     glGenBuffers(1, &EBO);
+    glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(float)* 4 * bill_vertices.size(), bill_vertices.data(), GL_STATIC_DRAW);
@@ -338,6 +317,13 @@ int main(int argc, char* argv[])
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(0);
 	CHECK_GL_ERROR(glBindAttribLocation(sp_, 0, "position"));
+
+	glBindBuffer(GL_ARRAY_BUFFER, UVO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float)* 2 * bill_uv.size(), bill_uv.data(), GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(1);
+	CHECK_GL_ERROR(glBindAttribLocation(sp_, 0, "uv"));
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float)* 3 * bill_faces.size(), bill_faces.data(), GL_STATIC_DRAW);
@@ -356,20 +342,35 @@ int main(int argc, char* argv[])
 	CHECK_GL_ERROR(view_matrix_location =
 			glGetUniformLocation(sp_, "view"));
 
-    // glBindVertexArray(0); // Unbind VAO
+    glBindVertexArray(0); // Unbind VAO
 
 	//Code above taken from render_pass
 
-	//Following code developed using online tutorial
-	Image img;
+	// Following code developed using online tutorial
+	LodePNGState img;
 	unsigned char *data;
-	std::string filename = "/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/assets/textures/cloud_14.jpg";
-	int pass = LoadJPEG(filename, &img);
-	std::cout<<"\ndata size: "<<img.bytes.size();
-	std::cout<<"\ndat1: "<<img.bytes[0];
+	unsigned width, height;
+	const char *filename = "/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/assets/textures/cloud_14.png";
+	// lodepng_state_init(&img);
+	unsigned pass = lodepng_decode32_file(&data, &width, &height, filename);
+
+	// Texture size must be power of two for the primitive OpenGL version this is written for. Find next power of two.
+  	size_t u2 = 1; while(u2 < width) u2 *= 2;
+  	size_t v2 = 1; while(v2 < height) v2 *= 2;
+  	// Ratio for power of two version compared to actual version, to render the non power of two image with proper size.
+  	double u3 = (double)width / u2;
+  	double v3 = (double)height / v2;
+
+  	// Make power of two version of the image.
+  	std::vector<unsigned char> data2(u2 * v2 * 4);
+  	for(size_t y = 0; y < height; y++)
+  	for(size_t x = 0; x < width; x++)
+  	for(size_t c = 0; c < 4; c++)
+  	{
+    	data2[4 * u2 * y + 4 * x + c] = data[4 * width * y + 4 * x + c];
+  	}
+
 	std::cout<<"\npass: "<<pass<<"\n";  //Finished grabbing JPG data!!
-	data = img.bytes.data();
-	std::cout<<"\ndata size: "<<sizeof(data);
 
     // Load and create a texture 
     GLuint texture1;
@@ -387,24 +388,18 @@ int main(int argc, char* argv[])
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     std::cout<<"\nSet texture filtering!";    
-    // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.width, img.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, img.bytes.data());
-
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, u2, v2, 0, GL_RGBA, GL_UNSIGNED_BYTE, &data2[0]);
     std::cout<<"\nSet TexImage2D!!";
     glGenerateMipmap(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
 
+    std::cout<<"\nFINISHED TEXTURE LOADING!";
+	glBindVertexArray(0);
+
+
 
 	//End Texture Code//
 
-	RenderDataInput floor_pass_input;
-	floor_pass_input.assign(0, "vertex_position", floor_vertices.data(), floor_vertices.size(), 4, GL_FLOAT);
-	floor_pass_input.assign_index(floor_faces.data(), floor_faces.size(), 3);
-	RenderPass floor_pass(-1,
-			floor_pass_input,
-			{ vertex_shader, geometry_shader, floor_fragment_shader},
-			{ floor_model, std_view, std_proj, std_light },
-			{ "fragment_color" }
-			);
 	float aspect = 0.0f;
 	std::cout << "center = " << mesh.getCenter() << "\n";
 
@@ -412,6 +407,7 @@ int main(int argc, char* argv[])
 	bool draw_skeleton = true;
 	bool draw_object = true;
 	bool draw_cylinder = true;
+	bool draw_bill = true;
 
 	while (!glfwWindowShouldClose(window)) {
 		// Setup some basic window stuff.
@@ -437,15 +433,14 @@ int main(int argc, char* argv[])
 		draw_cylinder = true;
 #endif
 		// FIXME: Draw bones first.
-		// Then draw floor.
-		if (draw_floor) {			
-			CHECK_GL_ERROR(glBindVertexArray(VAO));
-
+		if(draw_bill)
+		{
 			glUseProgram(sp_);
-
 			std::vector<ShaderUniform> uniforms_ = {std_proj, std_view};
 			const std::vector<unsigned> unilocs_ = {projection_matrix_location, view_matrix_location};
 			bind_uniforms(uniforms_, unilocs_);
+			glBindVertexArray(VAO);
+			// std::cout<<"\nError here?";				
 
 			bill_vertices.clear();
 			bill_faces.clear();
@@ -453,9 +448,6 @@ int main(int argc, char* argv[])
 			rot = gui.rot;
 			rot = rot * toRad;
 			create_bill(&gui, bill_vertices, bill_faces, bill_center, scale, rot);
-
-			glGenBuffers(1, &VBO);
-		    glGenBuffers(1, &EBO);
 
 		    glBindBuffer(GL_ARRAY_BUFFER, VBO);
 		    glBufferData(GL_ARRAY_BUFFER, sizeof(float)* 4 * bill_vertices.size(), bill_vertices.data(), GL_STATIC_DRAW);
@@ -474,12 +466,20 @@ int main(int argc, char* argv[])
 	        glActiveTexture(GL_TEXTURE0);
 	        glBindTexture(GL_TEXTURE_2D, texture1);
 	        glUniform1i(glGetUniformLocation(sp_, "ourTexture1"), 0);
-			CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, bill_faces.size() * 3, GL_UNSIGNED_INT, 0));
 
+			CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, bill_faces.size() * 3, GL_UNSIGNED_INT, 0));
+			glBindVertexArray(0);
+		}
+
+		// Then draw floor.
+		if (draw_floor) {	
 			floor_pass.setup();
 			// Draw our triangles.
 			CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, floor_faces.size() * 3, GL_UNSIGNED_INT, 0));		
 		}
+
+
+
 		if (draw_object) {
 			if (gui.isPoseDirty()) {
 				mesh.updateAnimation();

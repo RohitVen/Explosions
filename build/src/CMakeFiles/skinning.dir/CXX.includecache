@@ -8,16 +8,6 @@
 
 ../lib/debuggl.h
 
-../lib/image.h
-vector
--
-
-../lib/jpegio.h
-string
--
-image.h
-../lib/image.h
-
 ../lib/material.h
 image.h
 ../lib/image.h
@@ -86,6 +76,20 @@ string
 image.h
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/lib/image.h
 
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/lib/lodepng.h
+string.h
+-
+vector
+-
+string
+-
+lodepng.h
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/lib/lodepng.h
+iostream
+-
+lodepng.h
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/lib/lodepng.h
+
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/bone_geometry.h
 ostream
 -
@@ -102,26 +106,6 @@ mmdadapter.h
 
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/config.h
 
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/gui.cc
-gui.h
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/gui.h
-config.h
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/config.h
-jpegio.h
--
-bone_geometry.h
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/bone_geometry.h
-iostream
--
-debuggl.h
--
-glm/gtc/matrix_access.hpp
--
-glm/gtc/matrix_transform.hpp
--
-glm/gtx/transform.hpp
--
-
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/gui.h
 glm/glm.hpp
 -
@@ -132,6 +116,10 @@ GLFW/glfw3.h
 
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/main.cc
 GL/glew.h
+-
+SDL/SDL.h
+-
+GL/gl.h
 -
 dirent.h
 -
@@ -149,8 +137,8 @@ gui.h
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/lib/jpegio.h
 ../lib/image.h
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/lib/image.h
-shader.h
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shader.h
+../lib/lodepng.h
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/lib/lodepng.h
 algorithm
 -
 fstream
@@ -188,24 +176,6 @@ shaders/bill.frag
 shaders/tex.frag
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shaders/tex.frag
 
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/procedure_geometry.cc
-procedure_geometry.h
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/procedure_geometry.h
-bone_geometry.h
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/bone_geometry.h
-config.h
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/config.h
-gui.h
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/gui.h
-glm/gtc/matrix_access.hpp
--
-glm/gtc/matrix_transform.hpp
--
-glm/gtx/transform.hpp
--
-iostream
--
-
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/procedure_geometry.h
 vector
 -
@@ -224,18 +194,6 @@ map
 functional
 -
 material.h
--
-
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shader.h
-GL/glew.h
--
-string
--
-fstream
--
-sstream
--
-iostream
 -
 
 /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/shaders/bill.frag

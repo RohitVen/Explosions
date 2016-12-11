@@ -144,12 +144,36 @@ CMakeFiles/utgraphicsutil.dir/lib/mmdadapter.cc.o.provides: CMakeFiles/utgraphic
 
 CMakeFiles/utgraphicsutil.dir/lib/mmdadapter.cc.o.provides.build: CMakeFiles/utgraphicsutil.dir/lib/mmdadapter.cc.o
 
+CMakeFiles/utgraphicsutil.dir/lib/lodepng.cc.o: CMakeFiles/utgraphicsutil.dir/flags.make
+CMakeFiles/utgraphicsutil.dir/lib/lodepng.cc.o: ../lib/lodepng.cc
+	$(CMAKE_COMMAND) -E cmake_progress_report /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/build/CMakeFiles $(CMAKE_PROGRESS_5)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/utgraphicsutil.dir/lib/lodepng.cc.o"
+	/lusr/opt/gcc-5.2.0/bin/g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/utgraphicsutil.dir/lib/lodepng.cc.o -c /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/lib/lodepng.cc
+
+CMakeFiles/utgraphicsutil.dir/lib/lodepng.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/utgraphicsutil.dir/lib/lodepng.cc.i"
+	/lusr/opt/gcc-5.2.0/bin/g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/lib/lodepng.cc > CMakeFiles/utgraphicsutil.dir/lib/lodepng.cc.i
+
+CMakeFiles/utgraphicsutil.dir/lib/lodepng.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/utgraphicsutil.dir/lib/lodepng.cc.s"
+	/lusr/opt/gcc-5.2.0/bin/g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/lib/lodepng.cc -o CMakeFiles/utgraphicsutil.dir/lib/lodepng.cc.s
+
+CMakeFiles/utgraphicsutil.dir/lib/lodepng.cc.o.requires:
+.PHONY : CMakeFiles/utgraphicsutil.dir/lib/lodepng.cc.o.requires
+
+CMakeFiles/utgraphicsutil.dir/lib/lodepng.cc.o.provides: CMakeFiles/utgraphicsutil.dir/lib/lodepng.cc.o.requires
+	$(MAKE) -f CMakeFiles/utgraphicsutil.dir/build.make CMakeFiles/utgraphicsutil.dir/lib/lodepng.cc.o.provides.build
+.PHONY : CMakeFiles/utgraphicsutil.dir/lib/lodepng.cc.o.provides
+
+CMakeFiles/utgraphicsutil.dir/lib/lodepng.cc.o.provides.build: CMakeFiles/utgraphicsutil.dir/lib/lodepng.cc.o
+
 # Object files for target utgraphicsutil
 utgraphicsutil_OBJECTS = \
 "CMakeFiles/utgraphicsutil.dir/lib/debuggl.cc.o" \
 "CMakeFiles/utgraphicsutil.dir/lib/bitmap.cpp.o" \
 "CMakeFiles/utgraphicsutil.dir/lib/jpegio.cc.o" \
-"CMakeFiles/utgraphicsutil.dir/lib/mmdadapter.cc.o"
+"CMakeFiles/utgraphicsutil.dir/lib/mmdadapter.cc.o" \
+"CMakeFiles/utgraphicsutil.dir/lib/lodepng.cc.o"
 
 # External object files for target utgraphicsutil
 utgraphicsutil_EXTERNAL_OBJECTS =
@@ -158,6 +182,7 @@ libutgraphicsutil.a: CMakeFiles/utgraphicsutil.dir/lib/debuggl.cc.o
 libutgraphicsutil.a: CMakeFiles/utgraphicsutil.dir/lib/bitmap.cpp.o
 libutgraphicsutil.a: CMakeFiles/utgraphicsutil.dir/lib/jpegio.cc.o
 libutgraphicsutil.a: CMakeFiles/utgraphicsutil.dir/lib/mmdadapter.cc.o
+libutgraphicsutil.a: CMakeFiles/utgraphicsutil.dir/lib/lodepng.cc.o
 libutgraphicsutil.a: CMakeFiles/utgraphicsutil.dir/build.make
 libutgraphicsutil.a: CMakeFiles/utgraphicsutil.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking CXX static library libutgraphicsutil.a"
@@ -172,6 +197,7 @@ CMakeFiles/utgraphicsutil.dir/requires: CMakeFiles/utgraphicsutil.dir/lib/debugg
 CMakeFiles/utgraphicsutil.dir/requires: CMakeFiles/utgraphicsutil.dir/lib/bitmap.cpp.o.requires
 CMakeFiles/utgraphicsutil.dir/requires: CMakeFiles/utgraphicsutil.dir/lib/jpegio.cc.o.requires
 CMakeFiles/utgraphicsutil.dir/requires: CMakeFiles/utgraphicsutil.dir/lib/mmdadapter.cc.o.requires
+CMakeFiles/utgraphicsutil.dir/requires: CMakeFiles/utgraphicsutil.dir/lib/lodepng.cc.o.requires
 .PHONY : CMakeFiles/utgraphicsutil.dir/requires
 
 CMakeFiles/utgraphicsutil.dir/clean:

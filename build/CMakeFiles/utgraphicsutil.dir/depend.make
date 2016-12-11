@@ -14,6 +14,9 @@ CMakeFiles/utgraphicsutil.dir/lib/jpegio.cc.o: ../lib/image.h
 CMakeFiles/utgraphicsutil.dir/lib/jpegio.cc.o: ../lib/jpegio.cc
 CMakeFiles/utgraphicsutil.dir/lib/jpegio.cc.o: ../lib/jpegio.h
 
+CMakeFiles/utgraphicsutil.dir/lib/lodepng.cc.o: ../lib/lodepng.cc
+CMakeFiles/utgraphicsutil.dir/lib/lodepng.cc.o: ../lib/lodepng.h
+
 CMakeFiles/utgraphicsutil.dir/lib/mmdadapter.cc.o: ../lib/image.h
 CMakeFiles/utgraphicsutil.dir/lib/mmdadapter.cc.o: ../lib/bitmap.h
 CMakeFiles/utgraphicsutil.dir/lib/mmdadapter.cc.o: ../lib/material.h

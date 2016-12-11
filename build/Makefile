@@ -199,6 +199,30 @@ lib/jpegio.cc.s:
 	$(MAKE) -f CMakeFiles/utgraphicsutil.dir/build.make CMakeFiles/utgraphicsutil.dir/lib/jpegio.cc.s
 .PHONY : lib/jpegio.cc.s
 
+lib/lodepng.o: lib/lodepng.cc.o
+.PHONY : lib/lodepng.o
+
+# target to build an object file
+lib/lodepng.cc.o:
+	$(MAKE) -f CMakeFiles/utgraphicsutil.dir/build.make CMakeFiles/utgraphicsutil.dir/lib/lodepng.cc.o
+.PHONY : lib/lodepng.cc.o
+
+lib/lodepng.i: lib/lodepng.cc.i
+.PHONY : lib/lodepng.i
+
+# target to preprocess a source file
+lib/lodepng.cc.i:
+	$(MAKE) -f CMakeFiles/utgraphicsutil.dir/build.make CMakeFiles/utgraphicsutil.dir/lib/lodepng.cc.i
+.PHONY : lib/lodepng.cc.i
+
+lib/lodepng.s: lib/lodepng.cc.s
+.PHONY : lib/lodepng.s
+
+# target to generate assembly for a file
+lib/lodepng.cc.s:
+	$(MAKE) -f CMakeFiles/utgraphicsutil.dir/build.make CMakeFiles/utgraphicsutil.dir/lib/lodepng.cc.s
+.PHONY : lib/lodepng.cc.s
+
 lib/mmdadapter.o: lib/mmdadapter.cc.o
 .PHONY : lib/mmdadapter.o
 
@@ -242,6 +266,9 @@ help:
 	@echo "... lib/jpegio.o"
 	@echo "... lib/jpegio.i"
 	@echo "... lib/jpegio.s"
+	@echo "... lib/lodepng.o"
+	@echo "... lib/lodepng.i"
+	@echo "... lib/lodepng.s"
 	@echo "... lib/mmdadapter.o"
 	@echo "... lib/mmdadapter.i"
 	@echo "... lib/mmdadapter.s"

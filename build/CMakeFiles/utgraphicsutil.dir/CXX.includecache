@@ -6,25 +6,27 @@
 
 #IncludeRegexTransform: 
 
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/lib/image.h
-vector
--
-
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/lib/jpegio.cc
-jpegio.h
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/lib/jpegio.h
-vector
--
-jpeglib.h
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/lib/lodepng.cc
+lodepng.h
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/lib/lodepng.h
+limits.h
 -
 stdio.h
 -
-iostream
+stdlib.h
 -
 
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/lib/jpegio.h
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/lib/lodepng.h
+string.h
+-
+vector
+-
 string
 -
-image.h
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/lib/image.h
+lodepng.h
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/lib/lodepng.h
+iostream
+-
+lodepng.h
+/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/lib/lodepng.h
 
