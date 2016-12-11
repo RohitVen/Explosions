@@ -243,7 +243,10 @@ int main(int argc, char* argv[])
 	double radius = 0.75;
 	double toRad = M_PI/180;
 	double deg = 0;
+	float scale = 1;
+	float rot = 0.5;
 	bill_center.push_back(glm::vec4(0,2.5,0,1));
+	bill_center.push_back(glm::vec4(0,5.0,0,1));
 	// while(deg < 360)
 	// {
 	// 	double rad = deg * toRad;
@@ -253,10 +256,9 @@ int main(int argc, char* argv[])
 	// 	{
 	// 		rad = deg * toRad;
 	// 		bill_center.push_back((glm::vec4(radius*cos(rad), 2.5+radius*sin(rad), 0, 1)));
-	// 	}
-		
+	// 	}	
 	// }
-	create_bill(&gui, bill_vertices, bill_faces, bill_center, transforms, eye);
+	create_bill(&gui, bill_vertices, bill_faces, bill_center, scale, rot);
 
 	RenderDataInput bill_pass_input;
 	bill_pass_input.assign(0, "vertex_position", bill_vertices.data(), bill_vertices.size(), 4, GL_FLOAT);
@@ -446,11 +448,11 @@ int main(int argc, char* argv[])
 			bind_uniforms(uniforms_, unilocs_);
 
 			bill_vertices.clear();
-			transforms.clear();
-			eye = gui.getCamera();
 			bill_faces.clear();
-
-			create_bill(&gui, bill_vertices, bill_faces, bill_center, transforms, eye);
+			scale = gui.scale;
+			rot = gui.rot;
+			rot = rot * toRad;
+			create_bill(&gui, bill_vertices, bill_faces, bill_center, scale, rot);
 
 			glGenBuffers(1, &VBO);
 		    glGenBuffers(1, &EBO);
@@ -469,19 +471,14 @@ int main(int argc, char* argv[])
 		    CHECK_GL_ERROR(glBindFragDataLocation(sp_, 0, "color"));
 
 			// Bind Textures using texture units
-	        // glActiveTexture(GL_TEXTURE0);
-	        // glBindTexture(GL_TEXTURE_2D, texture1);
-	        // glUniform1i(glGetUniformLocation(sp_, "ourTexture1"), 0);
-			// bill_pass.setup();
+	        glActiveTexture(GL_TEXTURE0);
+	        glBindTexture(GL_TEXTURE_2D, texture1);
+	        glUniform1i(glGetUniformLocation(sp_, "ourTexture1"), 0);
 			CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, bill_faces.size() * 3, GL_UNSIGNED_INT, 0));
-			// glBindVertexArray(0);
 
 			floor_pass.setup();
 			// Draw our triangles.
-			CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, floor_faces.size() * 3, GL_UNSIGNED_INT, 0));
-
-			// tex_pass.setup();
-			// CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, bill_faces.size() * 3, GL_UNSIGNED_INT, 0));			
+			CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, floor_faces.size() * 3, GL_UNSIGNED_INT, 0));		
 		}
 		if (draw_object) {
 			if (gui.isPoseDirty()) {

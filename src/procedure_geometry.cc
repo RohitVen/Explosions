@@ -18,7 +18,7 @@ void create_floor(std::vector<glm::vec4>& floor_vertices, std::vector<glm::uvec3
 	floor_faces.push_back(glm::uvec3(2, 3, 0));
 }
 
-void create_bill(GUI *g, std::vector<glm::vec4>& bill_vertices, std::vector<glm::uvec3>& bill_faces, std::vector<glm::vec4> bill_center, std::vector<glm::mat4>& transforms, glm::vec3 center)
+void create_bill(GUI *g, std::vector<glm::vec4>& bill_vertices, std::vector<glm::uvec3>& bill_faces, std::vector<glm::vec4> &bill_center, float scale, float rot)
 {
 	int index = 0;
 	for(int i = 0; i < bill_center.size(); i++)
@@ -31,12 +31,24 @@ void create_bill(GUI *g, std::vector<glm::vec4>& bill_vertices, std::vector<glm:
 		// glm::vec4 t4 = glm::vec4(t.x-1,t.y-1,1.0,1.0);
 		glm::vec4 tang = glm::vec4(g->view_matrix_[0][0],g->view_matrix_[1][0],g->view_matrix_[2][0],0);
 		glm::vec4 up = glm::vec4(g->view_matrix_[0][1],g->view_matrix_[1][1],g->view_matrix_[2][1],0);
+		glm::vec3 center = g->getCamera();
 
-		glm::vec4 t1 = (t - tang) + up;
-		glm::vec4 t2 = (t + tang) + up;
-		glm::vec4 t3 = (t + tang) - up;
-		glm::vec4 t4 = (t - tang) - up;
+		glm::mat4 r = glm::rotate(rot, g->look_);
 
+		tang *= scale;
+		up *= scale;
+
+		glm::vec4 t1 = (glm::vec4(0) - tang) + up;
+		glm::vec4 t2 = (glm::vec4(0) + tang) + up;
+		glm::vec4 t3 = (glm::vec4(0) + tang) - up;
+		glm::vec4 t4 = (glm::vec4(0) - tang) - up;
+
+		t1 = (r * t1)+t;
+		t2 = (r * t2)+t;
+		t3 = (r * t3)+t;
+		t4 = (r * t4)+t;
+
+		/*Debugging stuff beloooooooww
 		glm::vec4 f1 = g->projection_matrix_ * g->view_matrix_ * t1;
 		glm::vec4 f2 = g->projection_matrix_ * g->view_matrix_ * t2;
 		glm::vec4 f3 = g->projection_matrix_ * g->view_matrix_ * t3;
@@ -61,7 +73,7 @@ void create_bill(GUI *g, std::vector<glm::vec4>& bill_vertices, std::vector<glm:
 		std::cout<<"\nf3: "<<f3.x<<" "<<f3.y<<" "<<f3.z<<" "<<f3.w;
 		std::cout<<"\nf4: "<<f4.x<<" "<<f4.y<<" "<<f4.z<<" "<<f4.w;
 
-		std::cout<<"\n\n";
+		std::cout<<"\n\n";*/
 
 		bill_vertices.push_back(t1);
 		bill_vertices.push_back(t2);
