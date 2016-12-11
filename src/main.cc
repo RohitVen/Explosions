@@ -255,7 +255,6 @@ int main(int argc, char* argv[])
 	// 	}
 		
 	// }
-	// bill_center.push_back(glm::vec4(0,3,0,1));
 	create_bill(&gui, bill_vertices, bill_faces, bill_center, transforms, eye);
 
 	RenderDataInput bill_pass_input;
@@ -337,16 +336,9 @@ int main(int argc, char* argv[])
     glEnableVertexAttribArray(0);
 	CHECK_GL_ERROR(glBindAttribLocation(sp_, 0, "position"));
 
-	// glBindBuffer(GL_ARRAY_BUFFER, VBO);
- //    glBufferData(GL_ARRAY_BUFFER, sizeof(float)* 16 * transforms.size(), transforms.data(), GL_STATIC_DRAW);
-
- //    // Transform attribute
- //    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 0, 0);
- //    glEnableVertexAttribArray(0);
-	// CHECK_GL_ERROR(glBindAttribLocation(sp_, 0, "b_view"));
-
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float)* 3 * bill_faces.size(), bill_faces.data(), GL_STATIC_DRAW);
+    
     CHECK_GL_ERROR(glBindFragDataLocation(sp_, 0, "color"));
 
     glLinkProgram(sp_);
@@ -448,19 +440,15 @@ int main(int argc, char* argv[])
 
 			glUseProgram(sp_);
 
-			// // Pass uniforms in.
-			// CHECK_GL_ERROR(glUniformMatrix4fv(projection_matrix_location, 1, GL_FALSE,
-			// 		&projection_matrix[0][0]));
-			// CHECK_GL_ERROR(glUniformMatrix4fv(view_matrix_location, 1, GL_FALSE,
-			// 		&view_matrix[0][0]));
 			std::vector<ShaderUniform> uniforms_ = {std_proj, std_view};
 			const std::vector<unsigned> unilocs_ = {projection_matrix_location, view_matrix_location};
 			bind_uniforms(uniforms_, unilocs_);
 			bill_vertices.clear();
 			transforms.clear();
 			eye = gui.getCamera();
-			bill_center.clear();
+
 			create_bill(&gui, bill_vertices, bill_faces, bill_center, transforms, eye);
+
 			// Bind Textures using texture units
 	        // glActiveTexture(GL_TEXTURE0);
 	        // glBindTexture(GL_TEXTURE_2D, texture1);
