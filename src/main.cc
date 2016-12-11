@@ -264,10 +264,10 @@ int main(int argc, char* argv[])
 	bill_uv.push_back(glm::vec2(1,0));
 	bill_uv.push_back(glm::vec2(0,0));
 	bill_uv.push_back(glm::vec2(0,1));
-	bill_uv.push_back(glm::vec2(1,1));
-	bill_uv.push_back(glm::vec2(1,0));
-	bill_uv.push_back(glm::vec2(0,0));
-	bill_uv.push_back(glm::vec2(0,1));
+	// bill_uv.push_back(glm::vec2(1,1));
+	// bill_uv.push_back(glm::vec2(1,0));
+	// bill_uv.push_back(glm::vec2(0,0));
+	// bill_uv.push_back(glm::vec2(0,1));
 	// while(deg < 360)
 	// {
 	// 	double rad = deg * toRad;
@@ -381,8 +381,8 @@ int main(int argc, char* argv[])
     glGenTextures(1, &texture1);
     glBindTexture(GL_TEXTURE_2D, texture1); // All upcoming GL_TEXTURE_2D operations now have effect on our texture object
     // Set our texture parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// Set texture wrapping to GL_REPEAT
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);	// Set texture wrapping to GL_REPEAT
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
     std::cout<<"\nSet texture parameters!";
     // Set texture filtering
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
