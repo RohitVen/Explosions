@@ -127,7 +127,7 @@ void GUI::updateMatrices()
 	else
 		eye_ = center_ - camera_distance_ * look_;
 
-	std::cout<<"\nUPDATING VIEW MATRIX->> NEW CENTER: "<<center_.x<<" "<<center_.y<<" "<<center_.z;
+	// std::cout<<"\nUPDATING VIEW MATRIX->> NEW CENTER: "<<center_.x<<" "<<center_.y<<" "<<center_.z;
 
 	view_matrix_ = glm::lookAt(eye_, center_, up_);
 	light_position_ = glm::vec4(eye_, 1.0f);

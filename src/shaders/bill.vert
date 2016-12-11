@@ -8,6 +8,6 @@ in mat4 b_view;
 out vec2 TexCoord;
 void main()
 {
-	gl_Position = position;
+	gl_Position = projection * view * position;
 }
 )zzz"
