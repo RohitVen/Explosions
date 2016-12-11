@@ -75,10 +75,15 @@ void create_bill(GUI *g, std::vector<glm::vec4>& bill_vertices, std::vector<glm:
 
 		std::cout<<"\n\n";*/
 
-		bill_vertices.push_back(t1);
-		bill_vertices.push_back(t2);
-		bill_vertices.push_back(t3);
-		bill_vertices.push_back(t4);
+		bill_vertices.push_back(t1);  //Top left
+		bill_vertices.push_back(t2);  //Top right
+		bill_vertices.push_back(t3);  //Bottom right
+		bill_vertices.push_back(t4);  //Bottom left
+
+		// bill_vertices.push_back(glm::vec4(0,1,0,0));
+		// bill_vertices.push_back(glm::vec4(1,1,0,0));
+		// bill_vertices.push_back(glm::vec4(1,0,0,0));
+		// bill_vertices.push_back(glm::vec4(0,0,0,0));
 
 		bill_faces.push_back(glm::uvec3(index+1,index,index+2));
 		bill_faces.push_back(glm::uvec3(index+2,index,index+3));

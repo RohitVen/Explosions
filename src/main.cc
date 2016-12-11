@@ -259,15 +259,40 @@ int main(int argc, char* argv[])
 	float scale = 1;
 	float rot = 0.5;
 	bill_center.push_back(glm::vec4(0,2.5,0,1));
-	bill_center.push_back(glm::vec4(0,5.0,7.0,1));
-	bill_uv.push_back(glm::vec2(1,1));
-	bill_uv.push_back(glm::vec2(1,0));
-	bill_uv.push_back(glm::vec2(0,0));
-	bill_uv.push_back(glm::vec2(0,1));
+
+	// Following code developed using online tutorial
+	unsigned char *data;
+	unsigned width, height;
+	const char *filename = "/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/assets/textures/cloud_14.png";
+	unsigned pass = lodepng_decode32_file(&data, &width, &height, filename);
+
+	// Texture size must be power of two for the primitive OpenGL version this is written for. Find next power of two.
+  	size_t u2 = 1; while(u2 < width) u2 *= 2;
+  	size_t v2 = 1; while(v2 < height) v2 *= 2;
+  	// Ratio for power of two version compared to actual version, to render the non power of two image with proper size.
+  	double u3 = (double)width / u2;
+  	double v3 = (double)height / v2;
+
+  	// Make power of two version of the image.
+  	std::vector<unsigned char> data2(u2 * v2 * 4);
+  	for(size_t y = 0; y < height; y++)
+  	for(size_t x = 0; x < width; x++)
+  	for(size_t c = 0; c < 4; c++)
+  	{
+    	data2[4 * u2 * y + 4 * x + c] = data[4 * width * y + 4 * x + c];
+  	}
+
+	std::cout<<"\npass: "<<pass<<"\n";  //Finished grabbing JPG data!!
+	std::cout<<"\nwidth: "<<width<<" "<<u2<<" "<<u3;
+	std::cout<<"\nheight: "<<height<<" "<<v2<<" "<<v3;
+
+	// bill_uv.push_back(glm::vec2(0,1));
 	// bill_uv.push_back(glm::vec2(1,1));
 	// bill_uv.push_back(glm::vec2(1,0));
 	// bill_uv.push_back(glm::vec2(0,0));
-	// bill_uv.push_back(glm::vec2(0,1));
+	// bill_uv.push_back(glm::vec2(1,0));
+	// bill_uv.push_back(glm::vec2(1,1));
+
 	// while(deg < 360)
 	// {
 	// 	double rad = deg * toRad;
@@ -318,11 +343,12 @@ int main(int argc, char* argv[])
     glEnableVertexAttribArray(0);
 	CHECK_GL_ERROR(glBindAttribLocation(sp_, 0, "position"));
 
+	//UV attribute
 	glBindBuffer(GL_ARRAY_BUFFER, UVO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(float)* 2 * bill_uv.size(), bill_uv.data(), GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(1);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(0);
 	CHECK_GL_ERROR(glBindAttribLocation(sp_, 0, "uv"));
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
@@ -332,7 +358,6 @@ int main(int argc, char* argv[])
 
     glLinkProgram(sp_);
 	CHECK_GL_PROGRAM_ERROR(sp_);
-
 
     // Get the uniform locations.
 	GLint projection_matrix_location = 0;
@@ -345,32 +370,6 @@ int main(int argc, char* argv[])
     glBindVertexArray(0); // Unbind VAO
 
 	//Code above taken from render_pass
-
-	// Following code developed using online tutorial
-	LodePNGState img;
-	unsigned char *data;
-	unsigned width, height;
-	const char *filename = "/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/assets/textures/cloud_14.png";
-	// lodepng_state_init(&img);
-	unsigned pass = lodepng_decode32_file(&data, &width, &height, filename);
-
-	// Texture size must be power of two for the primitive OpenGL version this is written for. Find next power of two.
-  	size_t u2 = 1; while(u2 < width) u2 *= 2;
-  	size_t v2 = 1; while(v2 < height) v2 *= 2;
-  	// Ratio for power of two version compared to actual version, to render the non power of two image with proper size.
-  	double u3 = (double)width / u2;
-  	double v3 = (double)height / v2;
-
-  	// Make power of two version of the image.
-  	std::vector<unsigned char> data2(u2 * v2 * 4);
-  	for(size_t y = 0; y < height; y++)
-  	for(size_t x = 0; x < width; x++)
-  	for(size_t c = 0; c < 4; c++)
-  	{
-    	data2[4 * u2 * y + 4 * x + c] = data[4 * width * y + 4 * x + c];
-  	}
-
-	std::cout<<"\npass: "<<pass<<"\n";  //Finished grabbing JPG data!!
 
     // Load and create a texture 
     GLuint texture1;
@@ -435,12 +434,14 @@ int main(int argc, char* argv[])
 		// FIXME: Draw bones first.
 		if(draw_bill)
 		{
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 			glUseProgram(sp_);
 			std::vector<ShaderUniform> uniforms_ = {std_proj, std_view};
 			const std::vector<unsigned> unilocs_ = {projection_matrix_location, view_matrix_location};
 			bind_uniforms(uniforms_, unilocs_);
-			glBindVertexArray(VAO);
-			// std::cout<<"\nError here?";				
+			glBindVertexArray(VAO);			
 
 			bill_vertices.clear();
 			bill_faces.clear();
@@ -456,9 +457,6 @@ int main(int argc, char* argv[])
 		    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
 		    glEnableVertexAttribArray(0);
 			CHECK_GL_ERROR(glBindAttribLocation(sp_, 0, "position"));
-
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-		    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float)* 3 * bill_faces.size(), bill_faces.data(), GL_STATIC_DRAW);
 		    
 		    CHECK_GL_ERROR(glBindFragDataLocation(sp_, 0, "color"));
 
