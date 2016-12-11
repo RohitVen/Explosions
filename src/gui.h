@@ -41,9 +41,16 @@ public:
 
 	bool isTransparent() const { return transparent_; }
 
-	glm::vec3 ScreenToWorld(double x, double y, glm::uvec4 viewport);
 	glm::mat4 view_matrix_ = glm::lookAt(eye_, center_, up_);
 	glm::mat4 projection_matrix_;
+	glm::mat4 model_matrix_ = glm::mat4(1.0f);
+	glm::vec3 eye_ = glm::vec3(0.0f, 0.1f, camera_distance_);
+	glm::vec3 up_ = glm::vec3(0.0f, 1.0f, 0.0f);
+	glm::vec3 look_ = glm::vec3(0.0f, 0.0f, -1.0f);
+	glm::vec3 tangent_ = glm::cross(look_, up_);
+	glm::vec3 center_ = eye_ - camera_distance_ * look_;
+	float rot = 0.017;
+	float scale = 1;
 private:
 	GLFWwindow* window_;
 	Mesh* mesh_;
@@ -64,15 +71,8 @@ private:
 	float zoom_speed_ = 0.1f;
 	float aspect_;
 
-	glm::vec3 eye_ = glm::vec3(0.0f, 0.1f, camera_distance_);
-	glm::vec3 up_ = glm::vec3(0.0f, 1.0f, 0.0f);
-	glm::vec3 look_ = glm::vec3(0.0f, 0.0f, -1.0f);
-	glm::vec3 tangent_ = glm::cross(look_, up_);
-	glm::vec3 center_ = eye_ - camera_distance_ * look_;
 	glm::mat3 orientation_ = glm::mat3(tangent_, up_, look_);
 	glm::vec4 light_position_;
-
-	glm::mat4 model_matrix_ = glm::mat4(1.0f);
 
 	bool captureWASDUPDOWN(int key, int action);
 

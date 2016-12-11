@@ -3,14 +3,12 @@
 
 #include <vector>
 #include <glm/glm.hpp>
-#include "bone_geometry.h"
+#include "gui.h"
 
 class LineMesh;
 
 void create_floor(std::vector<glm::vec4>& floor_vertices, std::vector<glm::uvec3>& floor_faces);
-
-void create_bones(std::vector<glm::vec4>& bone_vertices, std::vector<glm::uvec2>& bone_faces, Mesh &m);
-void create_cylinder(std::vector<glm::vec4>& cyl_vertices, std::vector<glm::uvec2>& cyl_faces, Mesh &m, int bone);
+void create_bill(GUI *g, std::vector<glm::vec4>& bill_vertices, std::vector<glm::uvec3>& bill_faces, std::vector<glm::vec4> &bill_center, float scale, float rot);
 // FIXME: Add functions to generate the bone mesh.
 
 #endif

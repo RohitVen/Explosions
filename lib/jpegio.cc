@@ -14,6 +14,7 @@ bool SaveJPEG(const std::string& filename,
 	FILE* outfile;
 	JSAMPROW row_pointer[1];
 	int row_stride;
+
 	cinfo.err = jpeg_std_error(&jerr);
 	jpeg_create_compress(&cinfo);
 
@@ -56,7 +57,10 @@ bool LoadJPEG(const std::string& file_name, Image* image)
 	jpeg_create_decompress(&info);
 
 	if (file == NULL)
+	{
+		std::cout<<"\nNULL FILE!!!";
 		return false;
+	}
 
 	jpeg_stdio_src(&info, file);
 	jpeg_read_header(&info, true);

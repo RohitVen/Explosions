@@ -1,8 +1,12 @@
 #include "procedure_geometry.h"
 #include "bone_geometry.h"
 #include "config.h"
+#include "gui.h"
+
+#include <glm/gtc/matrix_access.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform.hpp>
 #include <iostream>
-#include <cmath>
 
 void create_floor(std::vector<glm::vec4>& floor_vertices, std::vector<glm::uvec3>& floor_faces)
 {
@@ -14,64 +18,71 @@ void create_floor(std::vector<glm::vec4>& floor_vertices, std::vector<glm::uvec3
 	floor_faces.push_back(glm::uvec3(2, 3, 0));
 }
 
-void create_bones(std::vector<glm::vec4>& bone_vertices, std::vector<glm::uvec2>& bone_faces, Mesh &m)
+void create_bill(GUI *g, std::vector<glm::vec4>& bill_vertices, std::vector<glm::uvec3>& bill_faces, std::vector<glm::vec4> &bill_center, float scale, float rot)
 {
-	int src;
-	int dest;
-	Bone b;
-	Joint j;
-	for(int i = 0; i < m.skeleton.bones.size(); i++)
+	int index = 0;
+	for(int i = 0; i < bill_center.size(); i++)
 	{
-		b = m.skeleton.bones[i];
-		bone_vertices.push_back(glm::vec4(b.start,1));
-		bone_vertices.push_back(glm::vec4(b.end,1));
+		glm::vec4 t = bill_center[i];
+		// t = g->projection_matrix_ * g->view_matrix_ * t;
+		// glm::vec4 t1 = glm::vec4(-0.5,0.5,1.0,1.0);
+		// glm::vec4 t2 = glm::vec4(0.5,0.5,1.0,1.0);
+		// glm::vec4 t3 = glm::vec4(0.5,-0.5,1.0,1.0);
+		// glm::vec4 t4 = glm::vec4(-0.5,-0.5,1.0,1.0);
+		glm::vec4 tang = glm::vec4(g->view_matrix_[0][0],g->view_matrix_[1][0],g->view_matrix_[2][0],0);
+		glm::vec4 up = glm::vec4(g->view_matrix_[0][1],g->view_matrix_[1][1],g->view_matrix_[2][1],0);
+		glm::vec3 center = g->getCamera();
 
-	}
+		glm::mat4 r = glm::rotate(rot, g->look_);
 
-	for(int i = 0; i < 2*m.skeleton.bones.size(); i = i+2)
-	{
-		bone_faces.push_back(glm::uvec2(i,i+1));
-	}
-}
+		tang *= scale;
+		up *= scale;
 
-void create_cylinder(std::vector<glm::vec4>& cyl_vertices, std::vector<glm::uvec2>& cyl_faces, Mesh &m, int bone)
-{
-	double radius = kCylinderRadius;
-	double toRad = M_PI/180;
-	double deg = 0;
-	int ind = 0;
-	int num = 0;
-	Bone b = m.skeleton.bones[bone];
-	double len = b.length;
-	while(deg < 360)
-	{
-		double rad = deg * toRad;
-		cyl_vertices.push_back(b.coords*(glm::vec4(0, radius*cos(rad), radius*sin(rad), 1)));
-		deg += 45;
-		rad = deg * toRad;
-		cyl_vertices.push_back(b.coords*(glm::vec4(0, radius*cos(rad), radius*sin(rad), 1)));
-	}
-	deg = 0;
-	while(deg < 360)
-	{
-		double rad = deg * toRad;
-		cyl_vertices.push_back(b.coords*(glm::vec4(len, radius*cos(rad), radius*sin(rad), 1)));
-		deg += 45;
-		rad = deg * toRad;
-		cyl_vertices.push_back(b.coords*(glm::vec4(len, radius*cos(rad), radius*sin(rad), 1)));
-	}
-	deg = 0;
-	while(deg < 360)
-	{
-		double rad = deg * toRad;
-		cyl_vertices.push_back(b.coords*(glm::vec4(0, radius*cos(rad), radius*sin(rad), 1)));
-		cyl_vertices.push_back(b.coords*(glm::vec4(len, radius*cos(rad), radius*sin(rad), 1)));
-		deg += 45;
-	}
-	while(ind < 48)
-	{
-		cyl_faces.push_back(glm::uvec2(ind, ind+1));
-		ind += 2;	
+		glm::vec4 t1 = (glm::vec4(0) - tang) + up;
+		glm::vec4 t2 = (glm::vec4(0) + tang) + up;
+		glm::vec4 t3 = (glm::vec4(0) + tang) - up;
+		glm::vec4 t4 = (glm::vec4(0) - tang) - up;
+
+		t1 = (r * t1)+t;
+		t2 = (r * t2)+t;
+		t3 = (r * t3)+t;
+		t4 = (r * t4)+t;
+
+		/*Debugging stuff beloooooooww
+		glm::vec4 f1 = g->projection_matrix_ * g->view_matrix_ * t1;
+		glm::vec4 f2 = g->projection_matrix_ * g->view_matrix_ * t2;
+		glm::vec4 f3 = g->projection_matrix_ * g->view_matrix_ * t3;
+		glm::vec4 f4 = g->projection_matrix_ * g->view_matrix_ * t4;
+
+		std::cout<<"\nworld center: "<<g->center_.x<<" "<<g->center_.y<<" "<<g->center_.z;
+		std::cout<<"\neye: "<<center.x<<" "<<center.y<<" "<<center.z;
+		std::cout<<"\ntang: "<<tang.x<<" "<<tang.y<<" "<<tang.z;
+		std::cout<<"\nup: "<<up.x<<" "<<up.y<<" "<<up.z;
+		std::cout<<"\nlook: "<<g->look_.x<<" "<<g->look_.y<<" "<<g->look_.z;
+		std::cout<<"\nbill center: "<<t.x<<" "<<t.y<<" "<<t.z;
+		std::cout<<"\n";
+
+		std::cout<<"\nt1: "<<t1.x<<" "<<t1.y<<" "<<t1.z<<" "<<t1.w;
+		std::cout<<"\nt2: "<<t2.x<<" "<<t2.y<<" "<<t2.z<<" "<<t2.w;
+		std::cout<<"\nt3: "<<t3.x<<" "<<t3.y<<" "<<t3.z<<" "<<t3.w;
+		std::cout<<"\nt4: "<<t4.x<<" "<<t4.y<<" "<<t4.z<<" "<<t4.w;
+		std::cout<<"\n";
+
+		std::cout<<"\nf1: "<<f1.x<<" "<<f1.y<<" "<<f1.z<<" "<<f1.w;
+		std::cout<<"\nf2: "<<f2.x<<" "<<f2.y<<" "<<f2.z<<" "<<f2.w;
+		std::cout<<"\nf3: "<<f3.x<<" "<<f3.y<<" "<<f3.z<<" "<<f3.w;
+		std::cout<<"\nf4: "<<f4.x<<" "<<f4.y<<" "<<f4.z<<" "<<f4.w;
+
+		std::cout<<"\n\n";*/
+
+		bill_vertices.push_back(t1);  //Top left
+		bill_vertices.push_back(t2);  //Top right
+		bill_vertices.push_back(t3);  //Bottom right
+		bill_vertices.push_back(t4);  //Bottom left
+
+		bill_faces.push_back(glm::uvec3(index+1,index,index+2));
+		bill_faces.push_back(glm::uvec3(index+2,index,index+3));
+		index += 4;
 	}
 }
 

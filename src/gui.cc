@@ -7,52 +7,15 @@
 #include <glm/gtc/matrix_access.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
-#include <cmath>
-
 
 namespace {
 	// Intersect a cylinder with radius 1/2, height 1, with base centered at
 	// (0, 0, 0) and up direction (0, 1, 0).
 	bool IntersectCylinder(const glm::vec3& origin, const glm::vec3& direction,
-			float radius, float height, float *t, int id)
+			float radius, float height, float* t)
 	{
 		//FIXME perform proper ray-cylinder collision detection
-
-		double a = (direction.y*direction.y) + (direction.z*direction.z);
-		double b = 2*(origin.y*direction.y) + 2*(origin.z*direction.z);
-		double c = (origin.y*origin.y) + (origin.z*origin.z) - (radius*radius); 
-		double discrim = pow(b,2) - 4*a*c;
-		if(id == 1)
-		if(discrim < 0)
-		{
-			return false;
-		}
-		discrim = sqrt(discrim);
-		float t1 = (-1*b + discrim)/(2*a);
-		float t2 = (-1*b - discrim)/(2*a);
-		if(t1 < 0 && t2 < 0)
-		{
-			return false;
-		}
-
-		glm::vec3 check1 = glm::vec3(origin + (t1*direction));
-		glm::vec3 check2 = glm::vec3(origin + (t2*direction));
-
-
-		if(check1.x > 0 && check1.x < height)
-		{
-
-			*t = t1;
-			return true;
-		}
-		if(check2.x > 0 && check2.x < height)
-		{
-			*t = t2;
-
-			return true;
-		}
-
-		return false;
+		return true;
 	}
 }
 
@@ -86,10 +49,7 @@ void GUI::keyCallback(int key, int scancode, int action, int mods)
 		return ;
 	}
 	if (key == GLFW_KEY_J && action == GLFW_RELEASE) {
-		//DONE
-		GLubyte* pixels = new GLubyte[3 * window_width_* window_height_];
-		glReadPixels(0, 0, window_width_, window_height_, GL_RGB, GL_UNSIGNED_BYTE, pixels);
-		SaveJPEG("jpg1",window_width_, window_height_, pixels);
+		//FIXME save out a screenshot using SaveJPEG
 	}
 
 	if (captureWASDUPDOWN(key, action))
@@ -97,9 +57,11 @@ void GUI::keyCallback(int key, int scancode, int action, int mods)
 	if (key == GLFW_KEY_LEFT || key == GLFW_KEY_RIGHT) {
 		float roll_speed;
 		if (key == GLFW_KEY_RIGHT)
-			roll_speed = -roll_speed_;
+			// roll_speed = -roll_speed_;
+			rot--;
 		else
-			roll_speed = roll_speed_;
+			// roll_speed = roll_speed_;
+			rot++;
 		// FIXME: actually roll the bone here
 	} else if (key == GLFW_KEY_C && action != GLFW_RELEASE) {
 		fps_mode_ = !fps_mode_;
@@ -150,50 +112,8 @@ void GUI::mousePosCallback(double mouse_x, double mouse_y)
 	}
 
 	// FIXME: highlight bones that have been moused over
-	
-	
-	glm::vec3 ray = ScreenToWorld(current_x_, current_y_, viewport);
-	ray = glm::normalize(ray);
 	current_bone_ = -1;
-	float old_t = 10000000;
-for(int i = 0; i < mesh_->skeleton.bones.size(); i++)
-	{
-		Bone b = mesh_->skeleton.bones[i];
-		glm::vec4 t_origin = glm::vec4(eye_,1);
-		glm::vec4 t_ray = glm::vec4(ray,0);
-		t_origin = glm::inverse(b.coords) * t_origin;
-		t_ray = glm::inverse(b.coords) * t_ray;
-
-		glm::vec3 origin = glm::vec3(t_origin.x, t_origin.y, t_origin.z);
-		glm::vec3 direction = glm::vec3(t_ray.x, t_ray.y, t_ray.z);
-
-		direction = glm::normalize(direction);
-
-		float new_t = 100000000;
-		float len = (float) mesh_->skeleton.bones[i].length;
-		int collision = IntersectCylinder(origin, direction, kCylinderRadius, len, &new_t, i);
-
-		if(collision == 1 && new_t < old_t)
-		{
-			old_t = new_t;
-			current_bone_ = i;
-		}
-	}
-
-	if(current_bone_ == -1)
-		current_bone_ = -1;
 }
-
-glm::vec3 GUI::ScreenToWorld(double x, double y, glm::uvec4 viewport)
-{
-	glm::vec3 p = glm::vec3(x, y, 0);
-	p = glm::unProject(p, view_matrix_* model_matrix_, projection_matrix_, viewport);
-	glm::vec3 q = glm::vec3(x, y, 1);
-	q = glm::unProject(q, view_matrix_* model_matrix_, projection_matrix_, viewport);
-	glm::vec3 ray = q - p;
-	return ray;
-}
-
 
 void GUI::mouseButtonCallback(int button, int action, int mods)
 {
@@ -208,6 +128,8 @@ void GUI::updateMatrices()
 		center_ = eye_ + camera_distance_ * look_;
 	else
 		eye_ = center_ - camera_distance_ * look_;
+
+	// std::cout<<"\nUPDATING VIEW MATRIX->> NEW CENTER: "<<center_.x<<" "<<center_.y<<" "<<center_.z;
 
 	view_matrix_ = glm::lookAt(eye_, center_, up_);
 	light_position_ = glm::vec4(eye_, 1.0f);
@@ -241,13 +163,15 @@ bool GUI::captureWASDUPDOWN(int key, int action)
 		if (fps_mode_)
 			eye_ += zoom_speed_ * look_;
 		else
-			camera_distance_ -= zoom_speed_;
+			// camera_distance_ -= zoom_speed_;
+			scale += 0.05;
 		return true;
 	} else if (key == GLFW_KEY_S) {
 		if (fps_mode_)
 			eye_ -= zoom_speed_ * look_;
 		else
-			camera_distance_ += zoom_speed_;
+			// camera_distance_ += zoom_speed_;
+			scale -= 0.05;
 		return true;
 	} else if (key == GLFW_KEY_A) {
 		if (fps_mode_)

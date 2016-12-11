@@ -1,4 +1,6 @@
 #include <GL/glew.h>
+#include <SDL/SDL.h>
+#include <GL/gl.h>
 #include <dirent.h>
 
 #include "bone_geometry.h"
@@ -6,6 +8,9 @@
 #include "render_pass.h"
 #include "config.h"
 #include "gui.h"
+#include "../lib/jpegio.h"
+#include "../lib/image.h"
+#include "../lib/lodepng.h"
 
 #include <algorithm>
 #include <fstream>
@@ -18,7 +23,7 @@
 #include <glm/gtx/string_cast.hpp>
 #include <glm/gtx/io.hpp>
 #include <debuggl.h>
-#include <iostream>
+#include <cmath>
 
 int window_width = 800, window_height = 600;
 const std::string window_title = "Skinning";
@@ -39,69 +44,19 @@ const char* floor_fragment_shader =
 #include "shaders/floor.frag"
 ;
 
-// DONE
-const char* bone_vertex_shader =
-R"zzz(
-#version 330 core
-uniform mat4 projection;
-// uniform mat4 model;
-uniform mat4 view;
-in vec4 position;
+const char* bill_vertex_shader = 
+#include "shaders/bill.vert"
+;
 
-void main()
-{
-	gl_Position = projection * view * position;
-}
-)zzz";
+const char* bill_fragment_shader = 
+#include "shaders/bill.frag"
+;
 
-const char* bone_fragment_shader =
-R"zzz(#version 330 core
-out vec4 color;
+const char* tex_fragment_shader = 
+#include "shaders/tex.frag"
+;
 
-void main()
-{
-	color = vec4(255.0, 204.0, 0.0, 1.0);
-}
-)zzz";
-
-const char* cyl_fragment_shader =
-R"zzz(#version 330 core
-out vec4 color;
-
-void main()
-{
-	color = vec4(0.0, 191.0, 255.0, 1.0);
-}
-)zzz";
-
-const char* bill_vertex_shader =
-R"zzz(
-#version 330 core
-uniform mat4 projection;
-// uniform mat4 model;
-uniform mat4 view;
-in vec4 position;
-
-void main()
-{
-	vec4 center = vec4(0,0,0,1);
-	center = projection * view * center;
-	vec4 cam_up = vec4(view[0][1], view[1][1], view[2][1], view[3][1]);
-	vec4 cam_r = vec4(view[0][0], view[1][0], view[2][0], view[3][0]);
-	vec4 p = center + cam_r * position.x * 100 + cam_up * position.y * 100;
-	gl_Position = projection * view * p;
-}
-)zzz";
-
-// const char* bill_fragment_shader =
-// R"zzz(#version 330 core
-// out vec4 color;
-
-// void main()
-// {
-// 	color = vec4(0.0, 191.0, 255.0, 1.0);
-// }
-// )zzz";
+// FIXME: Add more shaders here.
 
 void ErrorCallback(int error, const char* description) {
 	std::cerr << "GLFW Error: " << description << "\n";
@@ -132,13 +87,38 @@ GLFWwindow* init_glefw()
 	return ret;
 }
 
+unsigned compileShader(const char* source_ptr, int type)
+{
+	if (!source_ptr)
+		return 0;
+	GLuint ret = 0;
+	CHECK_GL_ERROR(ret = glCreateShader(type));
+#if 0
+	std::cerr << __func__ << " shader id " << ret << " type " << type << "\tsource:\n" << source_ptr << std::endl;
+#endif
+	CHECK_GL_ERROR(glShaderSource(ret, 1, &source_ptr, nullptr));
+	glCompileShader(ret);
+	CHECK_GL_SHADER_ERROR(ret);
+	return ret;
+}
+
+void bind_uniforms(std::vector<ShaderUniform>& uniforms,
+		const std::vector<unsigned>& unilocs)
+{
+	for (size_t i = 0; i < uniforms.size(); i++) {
+		const auto& uni = uniforms[i];
+		//std::cerr << "binding " << uni.name << std::endl;
+		CHECK_GL_ERROR(uni.binder(unilocs[i], uni.data_source()));
+	}
+}
+
 int main(int argc, char* argv[])
 {
-	// if (argc < 2) {
-	// 	std::cerr << "Input model file is missing" << std::endl;
-	// 	std::cerr << "Usage: " << argv[0] << " <PMD file>" << std::endl;
-	// 	return -1;
-	// }
+	if (argc < 2) {
+		std::cerr << "Input model file is missing" << std::endl;
+		std::cerr << "Usage: " << argv[0] << " <PMD file>" << std::endl;
+		return -1;
+	}
 	GLFWwindow *window = init_glefw();
 	GUI gui(window);
 
@@ -149,29 +129,20 @@ int main(int argc, char* argv[])
 	// FIXME: add code to create bone and cylinder geometry
 
 	Mesh mesh;
-	// mesh.loadpmd(argv[1]);
+	mesh.loadpmd(argv[1]);
 	std::cout << "Loaded object  with  " << mesh.vertices.size()
 		<< " vertices and " << mesh.faces.size() << " faces.\n";
 
 	glm::vec4 mesh_center = glm::vec4(0.0f);
-	// for (size_t i = 0; i < mesh.vertices.size(); ++i) {
-	// 	mesh_center += mesh.vertices[i];
-	// }
-	// mesh_center /= mesh.vertices.size();
-
+	for (size_t i = 0; i < mesh.vertices.size(); ++i) {
+		mesh_center += mesh.vertices[i];
+	}
+	mesh_center /= mesh.vertices.size();
 
 	/*
 	 * GUI object needs the mesh object for bone manipulation.
 	 */
 	gui.assignMesh(&mesh);
-
-	std::vector<glm::vec4> bone_vertices;
-	std::vector<glm::uvec2> bone_faces;
-	create_bones(bone_vertices, bone_faces, mesh); //Get the vertices of the bones!
-
-	std::vector<glm::vec4> cyl_vertices;
-	std::vector<glm::uvec2> cyl_faces;
-	
 
 	glm::vec4 light_position = glm::vec4(0.0f, 100.0f, 0.0f, 1.0f);
 	MatrixPointers mats; // Define MatrixPointers here for lambda to capture
@@ -260,61 +231,8 @@ int main(int argc, char* argv[])
 			{ "fragment_color" }
 			);
 
-	// FIXME: Create the RenderPass objects for bones here.
-	//        Otherwise do whatever you like.
-
-
-	//Start Billboard code//
-	static const float bill_vertex_data[] = {
- 	-5.0f, 0.0f, 1.0f,
- 	5.0f, 0.0f, 1.0f,
- 	-5.0f, 5.0f, 1.0f,
- 	5.0f, 5.0f, 1.0f,
-	};
-	std::vector<glm::vec4> bill_vertices;
-	bill_vertices.push_back(glm::vec4(bill_vertex_data[6],bill_vertex_data[7],bill_vertex_data[8],1.0));
-	bill_vertices.push_back(glm::vec4(bill_vertex_data[9],bill_vertex_data[10],bill_vertex_data[11],1.0));
-	bill_vertices.push_back(glm::vec4(bill_vertex_data[3],bill_vertex_data[4],bill_vertex_data[5],1.0));
-	bill_vertices.push_back(glm::vec4(bill_vertex_data[0],bill_vertex_data[1],bill_vertex_data[2],1.0));
-
-	std::vector<glm::uvec3> bill_faces;
-	bill_faces.push_back(glm::uvec3(2,0,3));
-	bill_faces.push_back(glm::uvec3(1,0,2));
-
-	RenderDataInput bill_pass_input;
-	bill_pass_input.assign(0, "vertex_position", bill_vertices.data(), bill_vertices.size(), 4, GL_FLOAT);
-	bill_pass_input.assign_index(bill_faces.data(), bill_faces.size(), 3);
-	RenderPass bill_pass(-1,
-			bill_pass_input,
-			{ bill_vertex_shader, nullptr, cyl_fragment_shader},
-			{ std_model, std_view, std_proj},
-			{ "color" }
-			);
-
-	//End Billboard code//
-
-
-
-	RenderDataInput bone_pass_input;
-	bone_pass_input.assign(0, "vertex_postion", bone_vertices.data(), bone_vertices.size(), 4, GL_FLOAT);
-	bone_pass_input.assign_index(bone_faces.data(), bone_faces.size(), 2);
-	RenderPass bone_pass(-1, bone_pass_input, 
-		{bone_vertex_shader, nullptr, bone_fragment_shader}, 
-		{ std_view, std_proj}, 
-		{ "color" }
-		);
-
-	RenderDataInput cyl_pass_input;
-	cyl_pass_input.assign(0, "vertex_postion", cyl_vertices.data(), cyl_vertices.size(), 4, GL_FLOAT);
-	cyl_pass_input.assign_index(cyl_faces.data(), cyl_faces.size(), 2);
-	RenderPass cyl_pass(-1, cyl_pass_input, 
-		{bone_vertex_shader, nullptr, cyl_fragment_shader}, 
-		{std_model, std_view, std_proj}, 
-		{ "color" }
-		);
-
 	RenderDataInput floor_pass_input;
-	floor_pass_input.assign(0, "vertex_position", floor_vertices.data(), floor_vertices.size(), 4, GL_FLOAT);
+	floor_pass_input.assign(0, "vertex_position", floor_vertices.data(), floor_vertices.size(), 4, GL_FLOAT);	
 	floor_pass_input.assign_index(floor_faces.data(), floor_faces.size(), 3);
 	RenderPass floor_pass(-1,
 			floor_pass_input,
@@ -322,6 +240,159 @@ int main(int argc, char* argv[])
 			{ floor_model, std_view, std_proj, std_light },
 			{ "fragment_color" }
 			);
+
+	// FIXME: Create the RenderPass objects for bones here.
+	//        Otherwise do whatever you like.
+
+	//Start Billboard Code//
+
+	std::vector<glm::vec4> bill_vertices;
+	std::vector<glm::uvec3> bill_faces;
+	std::vector<glm::vec4> bill_center;
+	std::vector<glm::vec2> bill_uv;
+	for(int i = 0; i < bill_uv.size(); i++)
+	{
+		std::cout<<"\nSHOULD NOT GET IN HERE!!";
+	}
+	std::vector<glm::mat4> transforms;
+	glm::vec3 eye = gui.getCamera();
+	gui.updateMatrices();
+	double radius = 0.75;
+	double toRad = M_PI/180;
+	double deg = 0;
+	float scale = 1;
+	float rot = 0.5;
+	bill_center.push_back(glm::vec4(0,0,0,1));
+
+	// Following code developed using online tutorial
+	unsigned char *data;
+	unsigned width, height;
+	const char *filename = "/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/assets/textures/cloud_14.png";
+	unsigned pass = lodepng_decode32_file(&data, &width, &height, filename);
+
+	// Texture size must be power of two for the primitive OpenGL version this is written for. Find next power of two.
+  	size_t u2 = 1; while(u2 < width) u2 *= 2;
+  	size_t v2 = 1; while(v2 < height) v2 *= 2;
+  	// Ratio for power of two version compared to actual version, to render the non power of two image with proper size.
+  	double u3 = (double)width / u2;
+  	double v3 = (double)height / v2;
+
+  	// Make power of two version of the image.
+  	std::vector<unsigned char> data2(u2 * v2 * 4);
+  	for(size_t y = 0; y < height; y++)
+  	for(size_t x = 0; x < width; x++)
+  	for(size_t c = 0; c < 4; c++)
+  	{
+    	data2[4 * u2 * y + 4 * x + c] = data[4 * width * y + 4 * x + c];
+  	}
+
+	std::cout<<"\npass: "<<pass<<"\n";  //Finished grabbing JPG data!!
+	std::cout<<"\nwidth: "<<width<<" "<<u2<<" "<<u3;
+	std::cout<<"\nheight: "<<height<<" "<<v2<<" "<<v3;
+
+	bill_uv.push_back(glm::vec2(1,1));
+	bill_uv.push_back(glm::vec2(1,0));
+	bill_uv.push_back(glm::vec2(0,0));
+	bill_uv.push_back(glm::vec2(0,1));
+
+	bill_uv.push_back(glm::vec2(0,0));
+	bill_uv.push_back(glm::vec2(0,0));
+
+	// create_bill(&gui, bill_vertices, bill_faces, bill_center, scale, rot);
+
+	//End Billboard Code//
+
+
+	//Start Texture Code//
+
+	// Set up vertex data (and buffer(s)) and attribute pointers
+	GLuint VBO, VAO, EBO, UVO;
+    glGenVertexArrays(1, &VAO);
+
+    const std::vector<const char*> shaders = { bill_vertex_shader, nullptr, tex_fragment_shader};
+	unsigned sampler2d_;
+	unsigned vs_ = 0, gs_ = 0, fs_ = 0;
+	unsigned sp_ = 0;
+
+	// Program first  
+	vs_ = compileShader(shaders[0], GL_VERTEX_SHADER);
+	gs_ = compileShader(shaders[1], GL_GEOMETRY_SHADER);
+	fs_ = compileShader(shaders[2], GL_FRAGMENT_SHADER);
+	CHECK_GL_ERROR(sp_ = glCreateProgram());
+	glAttachShader(sp_, vs_);
+	glAttachShader(sp_, fs_);
+	if (shaders[1])
+		glAttachShader(sp_, gs_);
+
+	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &UVO);
+    glGenBuffers(1, &EBO);
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float)* 4 * bill_vertices.size(), nullptr, GL_STATIC_DRAW);
+
+    // Position attribute
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(0);
+	CHECK_GL_ERROR(glBindAttribLocation(sp_, 0, "position"));
+
+	//UV attribute
+	glBindBuffer(GL_ARRAY_BUFFER, UVO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float)* 2 * bill_uv.size(), bill_uv.data(), GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(2);
+	CHECK_GL_ERROR(glBindAttribLocation(sp_, 0, "uv"));
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float)* 3 * bill_faces.size(), nullptr, GL_STATIC_DRAW);
+    
+    CHECK_GL_ERROR(glBindFragDataLocation(sp_, 0, "color"));
+
+    glLinkProgram(sp_);
+	CHECK_GL_PROGRAM_ERROR(sp_);
+
+    // Get the uniform locations.
+	GLint projection_matrix_location = 0;
+	CHECK_GL_ERROR(projection_matrix_location =
+			glGetUniformLocation(sp_, "projection"));
+	GLint view_matrix_location = 0;
+	CHECK_GL_ERROR(view_matrix_location =
+			glGetUniformLocation(sp_, "view"));
+
+    glBindVertexArray(0); // Unbind VAO
+
+	//Code above taken from render_pass
+
+    // Load and create a texture 
+    GLuint texture1;
+    std::cout<<"\nCreated a texture!";
+    // ====================
+    // Texture 1
+    // ====================
+    glGenTextures(1, &texture1);
+    glBindTexture(GL_TEXTURE_2D, texture1); // All upcoming GL_TEXTURE_2D operations now have effect on our texture object
+    // Set our texture parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);	// Set texture wrapping to GL_REPEAT
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    std::cout<<"\nSet texture parameters!";
+    // Set texture filtering
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    std::cout<<"\nSet texture filtering!";    
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, u2, v2, 0, GL_RGBA, GL_UNSIGNED_BYTE, &data2[0]);
+    std::cout<<"\nSet TexImage2D!!";
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
+
+    std::cout<<"\nFINISHED TEXTURE LOADING!";
+	glBindVertexArray(0);
+
+
+
+	//End Texture Code//
+
 	float aspect = 0.0f;
 	std::cout << "center = " << mesh.getCenter() << "\n";
 
@@ -329,7 +400,6 @@ int main(int argc, char* argv[])
 	bool draw_skeleton = true;
 	bool draw_object = true;
 	bool draw_cylinder = true;
-	bool draw_bone = gui.isTransparent();
 	bool draw_bill = true;
 
 	while (!glfwWindowShouldClose(window)) {
@@ -356,44 +426,56 @@ int main(int argc, char* argv[])
 		draw_cylinder = true;
 #endif
 		// FIXME: Draw bones first.
-		// Then draw floor.
-		draw_bone = gui.isTransparent();
-
 		if(draw_bill)
 		{
-			// std::cout<<"\nDraw the bill!";
-			bill_pass.setup();
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+			glUseProgram(sp_);
+			std::vector<ShaderUniform> uniforms_ = {std_proj, std_view};
+			const std::vector<unsigned> unilocs_ = {projection_matrix_location, view_matrix_location};
+			bind_uniforms(uniforms_, unilocs_);
+			glBindVertexArray(VAO);			
+
+			bill_vertices.clear();
+			bill_faces.clear();
+			bill_uv.clear();
+			scale = gui.scale;
+			rot = gui.rot;
+			rot = rot * toRad;
+			create_bill(&gui, bill_vertices, bill_faces, bill_center, scale, rot);
+
+		    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		    glBufferData(GL_ARRAY_BUFFER, sizeof(float)* 4 * bill_vertices.size(), bill_vertices.data(), GL_STATIC_DRAW);
+
+		    // Position attribute
+		    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+		    glEnableVertexAttribArray(0);
+			CHECK_GL_ERROR(glBindAttribLocation(sp_, 0, "position"));
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float)* 3 * bill_faces.size(), bill_faces.data(), GL_STATIC_DRAW);
+		    
+		    CHECK_GL_ERROR(glBindFragDataLocation(sp_, 0, "color"));
+
+			// Bind Textures using texture units
+	        glActiveTexture(GL_TEXTURE0);
+	        glBindTexture(GL_TEXTURE_2D, texture1);
+	        glUniform1i(glGetUniformLocation(sp_, "ourTexture1"), 0);
+
 			CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, bill_faces.size() * 3, GL_UNSIGNED_INT, 0));
+			glBindVertexArray(0);
 		}
 
-		if(draw_bone)
-		{
-			bone_pass.setup();
-			CHECK_GL_ERROR(glDrawElements(GL_LINES, bone_faces.size() * 3, GL_UNSIGNED_INT, 0));
-		}
-
-		if(draw_cylinder)
-		{
-			cyl_vertices.clear();
-			cyl_faces.clear();
-			create_cylinder(cyl_vertices, cyl_faces, mesh, current_bone); //Create cylinders!!
-			cyl_pass_input.assign(0, "vertex_postion", cyl_vertices.data(), cyl_vertices.size(), 4, GL_FLOAT);
-			cyl_pass_input.assign_index(cyl_faces.data(), cyl_faces.size(), 2);
-			RenderPass cyl_pass(-1, cyl_pass_input, 
-				{bone_vertex_shader, nullptr, cyl_fragment_shader}, 
-				{std_model, std_view, std_proj}, 
-				{ "color" }
-				);
-			cyl_pass.setup();
-			CHECK_GL_ERROR(glDrawElements(GL_LINES, cyl_faces.size() * 3, GL_UNSIGNED_INT, 0));
-		}
-
-
-		if (draw_floor) {
+		// Then draw floor.
+		if (draw_floor) {	
 			floor_pass.setup();
 			// Draw our triangles.
-			CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, floor_faces.size() * 3, GL_UNSIGNED_INT, 0));
+			CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, floor_faces.size() * 3, GL_UNSIGNED_INT, 0));		
 		}
+
+
+
 		if (draw_object) {
 			if (gui.isPoseDirty()) {
 				mesh.updateAnimation();

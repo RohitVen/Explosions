@@ -3,6 +3,7 @@ FILE(REMOVE_RECURSE
   "CMakeFiles/utgraphicsutil.dir/lib/bitmap.cpp.o"
   "CMakeFiles/utgraphicsutil.dir/lib/jpegio.cc.o"
   "CMakeFiles/utgraphicsutil.dir/lib/mmdadapter.cc.o"
+  "CMakeFiles/utgraphicsutil.dir/lib/lodepng.cc.o"
   "libutgraphicsutil.pdb"
   "libutgraphicsutil.a"
 )

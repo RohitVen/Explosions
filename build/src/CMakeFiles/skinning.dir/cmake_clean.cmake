@@ -1,9 +1,9 @@
 FILE(REMOVE_RECURSE
-  "CMakeFiles/skinning.dir/render_pass.cc.o"
   "CMakeFiles/skinning.dir/procedure_geometry.cc.o"
   "CMakeFiles/skinning.dir/main.cc.o"
   "CMakeFiles/skinning.dir/gui.cc.o"
   "CMakeFiles/skinning.dir/bone_geometry.cc.o"
+  "CMakeFiles/skinning.dir/render_pass.cc.o"
   "../bin/skinning.pdb"
   "../bin/skinning"
 )
