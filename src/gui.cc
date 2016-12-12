@@ -49,8 +49,14 @@ void GUI::keyCallback(int key, int scancode, int action, int mods)
 		return ;
 	}
 	if (key == GLFW_KEY_K && action == GLFW_RELEASE) {
-		isPaused = !isPaused;
+		kickOff = true;
 		//FIXME save out a screenshot using SaveJPEG
+	}
+	if(key == GLFW_KEY_J && action == GLFW_RELEASE)
+	{
+		GLubyte* pixels = new GLubyte[3 * window_width_* window_height_];
+		glReadPixels(0, 0, window_width_, window_height_, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+		SaveJPEG("jpg1",window_width_, window_height_, pixels);
 	}
 
 	if (captureWASDUPDOWN(key, action))

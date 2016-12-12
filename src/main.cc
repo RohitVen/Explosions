@@ -310,21 +310,20 @@ int main(int argc, char* argv[])
 			// Draw our triangles.
 			CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, floor_faces.size() * 3, GL_UNSIGNED_INT, 0));		
 		}
-		ps.Update();
-		glm::vec3 eye = gui.eye_;
-		particles.clear();
-		for(int i = 0; i < ps.active_billboards.size(); i++)
-		{
-			ParticleBillboard b = ps.active_billboards[i];
-			glm::vec3 u = b.position;
-			particle p (b, glm::distance(u, eye));
-			particles.push_back(p);
-		}
-		std::sort(&particles[0], &particles[particles.size()]);
 
-			
-		if(!gui.isPaused)
+		if(gui.kickOff)
 		{
+			ps.Update();
+			glm::vec3 eye = gui.eye_;
+			particles.clear();
+			for(int i = 0; i < ps.active_billboards.size(); i++)
+			{
+				ParticleBillboard b = ps.active_billboards[i];
+				glm::vec3 u = b.position;
+				particle p (b, glm::distance(u, eye));
+				particles.push_back(p);
+			}
+			std::sort(&particles[0], &particles[particles.size()]);
 			bill_center.clear();
 			bill_faces.clear();
 			bill_uv.clear();
@@ -348,7 +347,7 @@ int main(int argc, char* argv[])
 				colors.push_back(glm::vec4(b.color, 1));
 			}
 		}
-		// sortVectors(bill_center, rot, scale, colors, alpha, gui.eye_);
+
 		bill_vertices.clear();
 		create_bill(&gui, bill_vertices, bill_faces, bill_center, scale, rot);
 
@@ -369,7 +368,6 @@ int main(int argc, char* argv[])
 			bill_pass.setup();
 
 			CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, bill_faces.size() * 3, GL_UNSIGNED_INT, 0));
-			// glBindVertexArray(0);
 		}
 		// Poll and swap.
 		glfwPollEvents();

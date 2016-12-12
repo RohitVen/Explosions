@@ -3,5 +3,10 @@
 	"position_y": 0.0,
 	"position_z": 0.0,
 	"emitters": [
-	"/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/json/billtestEM.json"]
+	"/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/json/emitter_fire.json",
+"/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/json/emitter_sparks.json",
+"/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/json/emitter_smoke1.json",
+"/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/json/emitter_smoke2.json",
+"/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/json/emitter_smoke3.json",
+"/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/json/emitter_smoke4.json"]
 }

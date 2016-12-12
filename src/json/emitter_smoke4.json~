@@ -1,0 +1,19 @@
+{
+	"type": "emitter",
+	"lifespan": 3.0,
+	"offset_x": 0.0,
+	"offset_y": 0.0,
+	"offset_z": 0.0,
+	"offset_range_x": 0.0,
+	"offset_range_y": 0.0,
+	"offset_range_z": 0.0,
+	"start_velocity_x": 0.0,
+	"start_velocity_y": 0.0,
+	"start_velocity_z": 0.0,
+	"acceleration_x": 0.0,
+	"acceleration_y": 0.0,
+	"acceleration_z": 0.0,
+	"emission_entity": "/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/json/billboard_smoke4.json",
+	"emission_rate": 100.0,
+	"spawn_delay": 0.0
+}
