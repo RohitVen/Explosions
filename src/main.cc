@@ -66,7 +66,9 @@ void ErrorCallback(int error, const char* description) {
 GLFWwindow* init_glefw()
 {
 	if (!glfwInit())
+	{
 		exit(EXIT_FAILURE);
+	}
 	glfwSetErrorCallback(ErrorCallback);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -115,25 +117,9 @@ void bind_uniforms(std::vector<ShaderUniform>& uniforms,
 
 int main(int argc, char* argv[])
 {
-	if (argc < 2) {
-		std::cerr << "Input model file is missing" << std::endl;
-		std::cerr << "Usage: " << argv[0] << " <PMD file>" << std::endl;
-		return -1;
-	}
 	ParticleSystem ps;
 	string path = "/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/json/psdefault.json";
 	ps.ConfigDefault(path);
-	// std::cout<<"\npositon: "<<ps.position.x<<" "<<ps.position.y<<" "<<ps.position.z;
-	// std::cout<<"\nlifespan: "<<ps.lifespan;
-
-	// std::cout<<"\n\n";
-	// ParticleEntity p = ps.active_entities[0];
-
-	// std::cout<<"\nEM1";
-	// std::cout<<"\nEM1position: "<<p.offset.x<<" "<<p.offset.y<<" "<<p.offset.z;
-	// std::cout<<"\nEM1lifespan: "<<p.lifespan;
-	// std::cout<<"\nEM1range: "<<p.offset_range.x<<" "<<p.offset_range.y<<" "<<p.offset_range.z;
-
 
 	GLFWwindow *window = init_glefw();
 	GUI gui(window);
@@ -145,15 +131,6 @@ int main(int argc, char* argv[])
 	// FIXME: add code to create bone and cylinder geometry
 
 	Mesh mesh;
-	mesh.loadpmd(argv[1]);
-	std::cout << "Loaded object  with  " << mesh.vertices.size()
-		<< " vertices and " << mesh.faces.size() << " faces.\n";
-
-	glm::vec4 mesh_center = glm::vec4(0.0f);
-	for (size_t i = 0; i < mesh.vertices.size(); ++i) {
-		mesh_center += mesh.vertices[i];
-	}
-	mesh_center /= mesh.vertices.size();
 
 	/*
 	 * GUI object needs the mesh object for bone manipulation.
@@ -269,17 +246,10 @@ int main(int argc, char* argv[])
 	std::vector<float> scale;
 	std::vector<glm::vec4> colors;
 	std::vector<float> alpha;
-	for(int i = 0; i < bill_uv.size(); i++)
-	{
-		std::cout<<"\nSHOULD NOT GET IN HERE!!";
-	}
-	std::vector<glm::mat4> transforms;
-	glm::vec3 eye = gui.getCamera();
-	gui.updateMatrices();
+
 	double radius = 0.75;
 	double toRad = M_PI/180;
 	double deg = 0;
-	// bill_center.push_back(glm::vec4(0,0,0,1));
 
 	// Following code developed using online tutorial
 	unsigned char *data;
@@ -302,18 +272,6 @@ int main(int argc, char* argv[])
   	{
     	data2[4 * u2 * y + 4 * x + c] = data[4 * width * y + 4 * x + c];
   	}
-
-	// std::cout<<"\npass: "<<pass<<"\n";  //Finished grabbing JPG data!!
-	// std::cout<<"\nwidth: "<<width<<" "<<u2<<" "<<u3;
-	// std::cout<<"\nheight: "<<height<<" "<<v2<<" "<<v3;
-
-	bill_uv.push_back(glm::vec2(1,1));
-	bill_uv.push_back(glm::vec2(1,0));
-	bill_uv.push_back(glm::vec2(0,0));
-	bill_uv.push_back(glm::vec2(0,1));
-
-	bill_uv.push_back(glm::vec2(0,0));
-	bill_uv.push_back(glm::vec2(0,0));
 
 	// create_bill(&gui, bill_vertices, bill_faces, bill_center, scale, rot);
 
@@ -411,7 +369,7 @@ int main(int argc, char* argv[])
 	//End Texture Code//
 
 	float aspect = 0.0f;
-	std::cout << "center = " << mesh.getCenter() << "\n";
+	// std::cout << "center = " << mesh.getCenter() << "\n";
 
 	bool draw_floor = true;
 	bool draw_skeleton = true;
@@ -438,37 +396,11 @@ int main(int argc, char* argv[])
 
 		int current_bone = gui.getCurrentBone();
 #if 1
-		draw_cylinder = (current_bone != -1 && gui.isTransparent());
+		draw_cylinder = (current_bone != -1 && gui.isTransparent());	
 #else
 		draw_cylinder = true;
 #endif
 		// FIXME: Draw bones first.
-		ps.Update();
-		bill_center.clear();
-		bill_vertices.clear();
-		bill_faces.clear();
-		bill_uv.clear();
-		scale.clear();
-		rot.clear();
-		colors.clear();
-		alpha.clear();
-		for(int i = 0; i < ps.active_billboards.size(); i++)
-		{
-			// std::cout<<"\nGot a billboard!";
-			bill_center.push_back(glm::vec4(ps.active_billboards[i].position,1));
-			scale.push_back(ps.active_billboards[i].scale);
-			rot.push_back(ps.active_billboards[i].rotation * toRad);
-			alpha.push_back(ps.active_billboards[i].alpha);
-			alpha.push_back(ps.active_billboards[i].alpha);
-			alpha.push_back(ps.active_billboards[i].alpha);
-			alpha.push_back(ps.active_billboards[i].alpha);
-			colors.push_back(glm::vec4(ps.active_billboards[i].color, 1));
-			colors.push_back(glm::vec4(ps.active_billboards[i].color, 1));
-			colors.push_back(glm::vec4(ps.active_billboards[i].color, 1));
-			colors.push_back(glm::vec4(ps.active_billboards[i].color, 1));
-		}
-		create_bill(&gui, bill_vertices, bill_faces, bill_center, scale, rot);
-
 
 		// Then draw floor.
 		if (draw_floor) {	
@@ -476,7 +408,33 @@ int main(int argc, char* argv[])
 			// Draw our triangles.
 			CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, floor_faces.size() * 3, GL_UNSIGNED_INT, 0));		
 		}
-
+		ps.Update();
+		if(!gui.isPaused)
+		{
+			bill_center.clear();
+			bill_faces.clear();
+			bill_uv.clear();
+			scale.clear();
+			rot.clear();
+			colors.clear();
+			alpha.clear();
+			for(int i = 0; i < ps.active_billboards.size(); i++)
+			{
+				bill_center.push_back(glm::vec4(ps.active_billboards[i].position,1));
+				scale.push_back(ps.active_billboards[i].scale);
+				rot.push_back(ps.active_billboards[i].rotation * toRad);
+				alpha.push_back(ps.active_billboards[i].alpha);
+				alpha.push_back(ps.active_billboards[i].alpha);
+				alpha.push_back(ps.active_billboards[i].alpha);
+				alpha.push_back(ps.active_billboards[i].alpha);
+				colors.push_back(glm::vec4(ps.active_billboards[i].color, 1));
+				colors.push_back(glm::vec4(ps.active_billboards[i].color, 1));
+				colors.push_back(glm::vec4(ps.active_billboards[i].color, 1));
+				colors.push_back(glm::vec4(ps.active_billboards[i].color, 1));
+			}
+		}
+		bill_vertices.clear();
+		create_bill(&gui, bill_vertices, bill_faces, bill_center, scale, rot);
 
 		if(draw_bill)
 		{
@@ -508,7 +466,7 @@ int main(int argc, char* argv[])
 			// CHECK_GL_ERROR(glBindAttribLocation(sp_, 1, "color"));
 
 			// glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-   //  		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float)* 3 * bill_faces.size(), bill_faces.data(), GL_STATIC_DRAW);
+    		// glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float)* 3 * bill_faces.size(), bill_faces.data(), GL_STATIC_DRAW);
 		    
 		 //    CHECK_GL_ERROR(glBindFragDataLocation(sp_, 0, "color"));
 
@@ -533,33 +491,6 @@ int main(int argc, char* argv[])
 
 			CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, bill_faces.size() * 3, GL_UNSIGNED_INT, 0));
 			// glBindVertexArray(0);
-		}
-
-
-
-		if (draw_object) {
-			if (gui.isPoseDirty()) {
-				mesh.updateAnimation();
-				object_pass.updateVBO(0,
-						      mesh.animated_vertices.data(),
-						      mesh.animated_vertices.size());
-#if 0
-				// For debugging if you need it.
-				for (int i = 0; i < 4; i++) {
-					std::cerr << " Vertex " << i << " from " << mesh.vertices[i] << " to " << mesh.animated_vertices[i] << std::endl;
-				}
-#endif
-				gui.clearPose();
-			}
-			object_pass.setup();
-			int mid = 0;
-			while (object_pass.renderWithMaterial(mid))
-				mid++;
-#if 0	
-			// For debugging also
-			if (mid == 0) // Fallback
-				CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, mesh.faces.size() * 3, GL_UNSIGNED_INT, 0));
-#endif
 		}
 		// Poll and swap.
 		glfwPollEvents();

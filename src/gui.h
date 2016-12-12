@@ -51,6 +51,7 @@ public:
 	glm::vec3 center_ = eye_ - camera_distance_ * look_;
 	float rot = 0.017;
 	float scale = 1;
+	bool isPaused = false;
 private:
 	GLFWwindow* window_;
 	Mesh* mesh_;

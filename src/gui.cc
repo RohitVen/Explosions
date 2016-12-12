@@ -48,7 +48,8 @@ void GUI::keyCallback(int key, int scancode, int action, int mods)
 		glfwSetWindowShouldClose(window_, GL_TRUE);
 		return ;
 	}
-	if (key == GLFW_KEY_J && action == GLFW_RELEASE) {
+	if (key == GLFW_KEY_K && action == GLFW_RELEASE) {
+		isPaused = !isPaused;
 		//FIXME save out a screenshot using SaveJPEG
 	}
 
