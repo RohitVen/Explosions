@@ -8,12 +8,37 @@
 #include <utility>
 #include <stdlib.h>
 #include <unordered_map>
+#include <map>
 
 #include "rapidjson/document.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
 
 using namespace std;
+
+class fileCache
+{
+public:
+	typedef unordered_map<string, string> StringMap;
+	typedef pair<string, string> StringPair;
+	static StringMap fileMap;
+	static string& getFileContents(string path)
+	{
+		// cout << "filemap size: " << fileMap.size() << endl;
+		StringMap::const_iterator got = fileMap.find(path);
+		if(got == fileMap.end())
+		{
+			ifstream infile { path };
+			string filestr { istreambuf_iterator<char>(infile), istreambuf_iterator<char>() };
+			fileMap.insert(StringPair(path, filestr));
+			return fileMap.find(path)->second;
+		}
+		else
+		{	
+			return fileMap.find(path)->second;
+		}
+	}
+};
 
 class jsonVerify
 {
@@ -149,8 +174,7 @@ struct ParticleBillboard: ParticleEntity
 		timespawned = glfwGetTime();
 		last_frame_time = glfwGetTime();
 
-		ifstream infile { jsonpath };
-		string jsonstr { istreambuf_iterator<char>(infile), istreambuf_iterator<char>() };
+		string jsonstr = fileCache::getFileContents(jsonpath);
 		const char* jsondata = jsonstr.c_str();
 		rapidjson::Document document;
 		document.Parse(jsondata);
@@ -224,7 +248,9 @@ struct ParticleBillboard: ParticleEntity
 		position += dtime * velocity;
 		double time_diff = glfwGetTime() - timespawned;
 		float percent = time_diff / lifespan;
-		color = start_color + percent*(end_color - start_color);
+		color.x = start_color.x + percent*(end_color.x - start_color.x);
+		color.y = start_color.y + percent*(end_color.y - start_color.y);
+		color.z = start_color.z + percent*(end_color.z - start_color.z);
 		alpha = start_alpha + percent*(end_alpha - start_alpha);
 		scale = start_scale + percent*(end_scale - start_scale);
 		rotation = start_rotation + percent*(end_rotation - start_rotation);
@@ -249,8 +275,7 @@ struct ParticleEmitter: ParticleEntity
 		last_frame_time = glfwGetTime();
 		last_emit_time = -1.0;
 
-		ifstream infile { jsonpath };
-		string jsonstr { istreambuf_iterator<char>(infile), istreambuf_iterator<char>() };
+		string jsonstr = fileCache::getFileContents(jsonpath);
 		const char* jsondata = jsonstr.c_str();
 		rapidjson::Document document;
 		document.Parse(jsondata);
@@ -269,13 +294,13 @@ struct ParticleEmitter: ParticleEntity
 		jsonVerify::verifyFloat(document, "offset_range_z", offset_range[2]);
 
     	offset_range[0] = ((float(rand()) / float(RAND_MAX)) * (offset_range[0] + offset_range[0])) - offset_range[0];
-    	cout << "\noffrange0 = " << offset_range[0];
+    	// cout << "\noffrange0 = " << offset_range[0];
 
     	offset_range[1] = ((float(rand()) / float(RAND_MAX)) * (offset_range[1] + offset_range[1])) - offset_range[1];
-    	cout << "\noffrange1 = " << offset_range[1];
+    	// cout << "\noffrange1 = " << offset_range[1];
 
     	offset_range[2] = ((float(rand()) / float(RAND_MAX)) * (offset_range[2] + offset_range[2])) - offset_range[2];
-    	cout << "\noffrange2 = " << offset_range[2];
+    	// cout << "\noffrange2 = " << offset_range[2];
 
     	position = position + offset + offset_range;
 
@@ -296,8 +321,7 @@ struct ParticleEmitter: ParticleEntity
 
 	void Emit()
 	{
-		ifstream infile { emission_entity_path };
-		string jsonstr { istreambuf_iterator<char>(infile), istreambuf_iterator<char>() };
+		string jsonstr = fileCache::getFileContents(emission_entity_path);
 		const char* jsondata = jsonstr.c_str();
 		rapidjson::Document document;
 		document.Parse(jsondata);
@@ -362,12 +386,7 @@ struct ParticleSystem
 	void ConfigDefault(string jsonpath)
 	{
 		is_finished = false;
-		ifstream infile { jsonpath };
-		if(!infile)
-		{
-			std::cout<<"\nERROR: Unable to find specified file";
-		}
-		string jsonstr { istreambuf_iterator<char>(infile), istreambuf_iterator<char>() };
+		string jsonstr = fileCache::getFileContents(jsonpath);
 		// std::cout<<"\n\n\nfilepath: "<<jsonstr<<"\n\n\n";
 		const char* jsondata = jsonstr.c_str();
 		rapidjson::Document document;

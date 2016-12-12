@@ -13,7 +13,7 @@
 	"acceleration_x": 0.0,
 	"acceleration_y": 0.0,
 	"acceleration_z": 0.0,
-	"emission_entity": "/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/json/genericEM1.json",
+	"emission_entity": "/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/json/billtest.json",
 	"emission_rate": 100.0,
 	"spawn_delay": 0.0
 }

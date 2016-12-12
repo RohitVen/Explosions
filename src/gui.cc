@@ -57,11 +57,11 @@ void GUI::keyCallback(int key, int scancode, int action, int mods)
 	if (key == GLFW_KEY_LEFT || key == GLFW_KEY_RIGHT) {
 		float roll_speed;
 		if (key == GLFW_KEY_RIGHT)
-			// roll_speed = -roll_speed_;
-			rot--;
+			roll_speed = -roll_speed_;
+			// rot--;
 		else
-			// roll_speed = roll_speed_;
-			rot++;
+			roll_speed = roll_speed_;
+			// rot++;
 		// FIXME: actually roll the bone here
 	} else if (key == GLFW_KEY_C && action != GLFW_RELEASE) {
 		fps_mode_ = !fps_mode_;
@@ -163,15 +163,15 @@ bool GUI::captureWASDUPDOWN(int key, int action)
 		if (fps_mode_)
 			eye_ += zoom_speed_ * look_;
 		else
-			// camera_distance_ -= zoom_speed_;
-			scale += 0.05;
+			camera_distance_ -= zoom_speed_;
+			// scale += 0.05;
 		return true;
 	} else if (key == GLFW_KEY_S) {
 		if (fps_mode_)
 			eye_ -= zoom_speed_ * look_;
 		else
-			// camera_distance_ += zoom_speed_;
-			scale -= 0.05;
+			camera_distance_ += zoom_speed_;
+			// scale -= 0.05;
 		return true;
 	} else if (key == GLFW_KEY_A) {
 		if (fps_mode_)

@@ -268,6 +268,7 @@ int main(int argc, char* argv[])
 	std::vector<float> rot;
 	std::vector<float> scale;
 	std::vector<glm::vec4> colors;
+	std::vector<float> alpha;
 	for(int i = 0; i < bill_uv.size(); i++)
 	{
 		std::cout<<"\nSHOULD NOT GET IN HERE!!";
@@ -450,15 +451,32 @@ int main(int argc, char* argv[])
 		scale.clear();
 		rot.clear();
 		colors.clear();
+		alpha.clear();
 		for(int i = 0; i < ps.active_billboards.size(); i++)
 		{
 			// std::cout<<"\nGot a billboard!";
 			bill_center.push_back(glm::vec4(ps.active_billboards[i].position,1));
 			scale.push_back(ps.active_billboards[i].scale);
 			rot.push_back(ps.active_billboards[i].rotation * toRad);
-			colors.push_back(glm::vec4(ps.active_billboards[i].color,1));
+			alpha.push_back(ps.active_billboards[i].alpha);
+			alpha.push_back(ps.active_billboards[i].alpha);
+			alpha.push_back(ps.active_billboards[i].alpha);
+			alpha.push_back(ps.active_billboards[i].alpha);
+			colors.push_back(glm::vec4(ps.active_billboards[i].color, 1));
+			colors.push_back(glm::vec4(ps.active_billboards[i].color, 1));
+			colors.push_back(glm::vec4(ps.active_billboards[i].color, 1));
+			colors.push_back(glm::vec4(ps.active_billboards[i].color, 1));
 		}
 		create_bill(&gui, bill_vertices, bill_faces, bill_center, scale, rot);
+
+
+		// Then draw floor.
+		if (draw_floor) {	
+			floor_pass.setup();
+			// Draw our triangles.
+			CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, floor_faces.size() * 3, GL_UNSIGNED_INT, 0));		
+		}
+
 
 		if(draw_bill)
 		{
@@ -502,7 +520,8 @@ int main(int argc, char* argv[])
 	        RenderDataInput bill_pass_input;
 			bill_pass_input.assign(0, "position", bill_vertices.data(), bill_vertices.size(), 4, GL_FLOAT);	
 			bill_pass_input.assign(1, "color", colors.data(), colors.size(), 4, GL_FLOAT);	
-			bill_pass_input.assign_index(bill_faces.data(), bill_faces.size(), 4);
+			bill_pass_input.assign(2, "alpha", alpha.data(), alpha.size(), 1, GL_FLOAT);	
+			bill_pass_input.assign_index(bill_faces.data(), bill_faces.size(), 3);
 			RenderPass bill_pass(-1,
 					bill_pass_input,
 					{ bill_vertex_shader, nullptr, bill_fragment_shader},
@@ -514,13 +533,6 @@ int main(int argc, char* argv[])
 
 			CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, bill_faces.size() * 3, GL_UNSIGNED_INT, 0));
 			// glBindVertexArray(0);
-		}
-
-		// Then draw floor.
-		if (draw_floor) {	
-			floor_pass.setup();
-			// Draw our triangles.
-			CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, floor_faces.size() * 3, GL_UNSIGNED_INT, 0));		
 		}
 
 
