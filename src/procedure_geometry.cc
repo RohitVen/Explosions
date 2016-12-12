@@ -18,7 +18,7 @@ void create_floor(std::vector<glm::vec4>& floor_vertices, std::vector<glm::uvec3
 	floor_faces.push_back(glm::uvec3(2, 3, 0));
 }
 
-void create_bill(GUI *g, std::vector<glm::vec4>& bill_vertices, std::vector<glm::uvec3>& bill_faces, std::vector<glm::vec4> &bill_center, float scale, float rot)
+void create_bill(GUI *g, std::vector<glm::vec4>& bill_vertices, std::vector<glm::uvec3>& bill_faces, std::vector<glm::vec4> &bill_center, std::vector<float> scale, std::vector<float> rot)
 {
 	int index = 0;
 	for(int i = 0; i < bill_center.size(); i++)
@@ -33,10 +33,10 @@ void create_bill(GUI *g, std::vector<glm::vec4>& bill_vertices, std::vector<glm:
 		glm::vec4 up = glm::vec4(g->view_matrix_[0][1],g->view_matrix_[1][1],g->view_matrix_[2][1],0);
 		glm::vec3 center = g->getCamera();
 
-		glm::mat4 r = glm::rotate(rot, g->look_);
+		glm::mat4 r = glm::rotate(rot[i], g->look_);
 
-		tang *= scale;
-		up *= scale;
+		tang *= scale[i];
+		up *= scale[i];
 
 		glm::vec4 t1 = (glm::vec4(0) - tang) + up;
 		glm::vec4 t2 = (glm::vec4(0) + tang) + up;

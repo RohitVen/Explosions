@@ -1,0 +1,12 @@
+{
+	"lifespan": 5.0,
+	"offset_x": 0.0,
+	"offset_y": 0.0,
+	"offset_z": 0.0,
+	"offset_range_x": 5.0,
+	"offset_range_y": 5.0,
+	"offset_range_z": 5.0,
+	"emission_entity": "420blazeit",
+	"emission_rate": 2.0,
+	"spawn_offset": 3.0
+}

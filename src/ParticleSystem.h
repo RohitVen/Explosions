@@ -3,9 +3,11 @@
 #include <glm/glm.hpp>
 #include <iostream>
 #include <fstream>
-#include <time.h>
 #include <streambuf>
 #include <GLFW/glfw3.h>
+#include <utility>
+#include <stdlib.h>
+#include <unordered_map>
 
 #include "rapidjson/document.h"
 #include "rapidjson/writer.h"
@@ -16,13 +18,15 @@ using namespace std;
 class jsonVerify
 {
 public:
+
 	static bool verifyString(rapidjson::Document& doc, string name, string& result)
 	{
 		if(doc.HasMember(name.c_str()))
 		{
 			if(doc[name.c_str()].IsString())
 			{
-				result = doc[name.c_str()].GetString();
+				string res = doc[name.c_str()].GetString();
+				result = res;
 				return true;
 			}
 			else
@@ -43,7 +47,8 @@ public:
 		{
 			if(doc[name.c_str()].IsInt())
 			{
-				result = doc[name.c_str()].GetInt();
+				int res = doc[name.c_str()].GetInt();
+				result = res;
 				return true;
 			}
 			else
@@ -64,7 +69,8 @@ public:
 		{
 			if(doc[name.c_str()].IsDouble())
 			{
-				result = doc[name.c_str()].GetDouble();
+				float res = doc[name.c_str()].GetDouble();
+				result = res;
 				return true;
 			}
 			else
@@ -85,7 +91,8 @@ public:
 		{
 			if(doc[name.c_str()].IsDouble())
 			{
-				result = doc[name.c_str()].GetDouble();
+				double res = doc[name.c_str()].GetDouble();
+				result = res;
 				return true;
 			}
 			else
@@ -106,9 +113,9 @@ struct ParticleEntity
 	bool isBillboard;
 	double timespawned;
 	double lifespan = 1.0;
+	double last_frame_time;
 
-	glm::vec3 offset;
-	glm::vec3 offset_range;
+	glm::vec3 position;
 	glm::vec3 acceleration;
 	glm::vec3 velocity;
 
@@ -140,6 +147,7 @@ struct ParticleBillboard: ParticleEntity
 	{
 		isBillboard = true;
 		timespawned = glfwGetTime();
+		last_frame_time = glfwGetTime();
 
 		ifstream infile { jsonpath };
 		string jsonstr { istreambuf_iterator<char>(infile), istreambuf_iterator<char>() };
@@ -149,6 +157,9 @@ struct ParticleBillboard: ParticleEntity
 
 		jsonVerify::verifyDouble(document, "lifespan", lifespan);
 
+		glm::vec3 offset;
+		glm::vec3 offset_range;
+
 		jsonVerify::verifyFloat(document, "offset_x", offset[0]);
 		jsonVerify::verifyFloat(document, "offset_y", offset[1]);
 		jsonVerify::verifyFloat(document, "offset_z", offset[2]);
@@ -156,6 +167,32 @@ struct ParticleBillboard: ParticleEntity
 		jsonVerify::verifyFloat(document, "offset_range_x", offset_range[0]);
 		jsonVerify::verifyFloat(document, "offset_range_y", offset_range[1]);
 		jsonVerify::verifyFloat(document, "offset_range_z", offset_range[2]);
+
+		offset_range[0] = ((float(rand()) / float(RAND_MAX)) * (offset_range[0] + offset_range[0])) - offset_range[0];
+    	// cout << "\noffrange0 = " << offset_range[0];
+
+    	offset_range[1] = ((float(rand()) / float(RAND_MAX)) * (offset_range[1] + offset_range[1])) - offset_range[1];
+    	// cout << "\noffrange1 = " << offset_range[1];
+
+    	offset_range[2] = ((float(rand()) / float(RAND_MAX)) * (offset_range[2] + offset_range[2])) - offset_range[2];
+    	// cout << "\noffrange2 = " << offset_range[2];
+
+    	position = position + offset + offset_range;
+
+    	jsonVerify::verifyFloat(document, "start_velocity_x", velocity[0]);
+    	jsonVerify::verifyFloat(document, "start_velocity_y", velocity[1]);
+    	jsonVerify::verifyFloat(document, "start_velocity_z", velocity[2]);
+
+    	jsonVerify::verifyFloat(document, "acceleration_x", acceleration[0]);
+    	jsonVerify::verifyFloat(document, "acceleration_y", acceleration[1]);
+    	jsonVerify::verifyFloat(document, "acceleration_z", acceleration[2]);
+
+
+    	jsonVerify::verifyFloat(document, "start_alpha", start_alpha);
+		alpha = start_alpha;
+		jsonVerify::verifyFloat(document, "end_alpha", end_alpha);jsonVerify::verifyFloat(document, "start_alpha", start_alpha);
+		alpha = start_alpha;
+		jsonVerify::verifyFloat(document, "end_alpha", end_alpha);
 
 		jsonVerify::verifyFloat(document, "start_color_r", start_color[0]);
 		jsonVerify::verifyFloat(document, "start_color_g", start_color[1]);
@@ -182,31 +219,34 @@ struct ParticleBillboard: ParticleEntity
 
 	void Update()
 	{
+		float dtime = glfwGetTime() - last_frame_time;
+		velocity += dtime * acceleration;
+		position += dtime * velocity;
 		double time_diff = glfwGetTime() - timespawned;
 		float percent = time_diff / lifespan;
-		if(color.x < end_color.x && color.y < end_color.y && color.z < end_color.z)
-			color += glm::vec3(percent, percent, percent);
-		if(scale < end_scale)
-			scale += percent;
-		if(rotation < end_rotation)
-			rotation += percent;
-		if(alpha < end_alpha)
-			alpha += percent;
+		color = start_color + percent*(end_color - start_color);
+		alpha = start_alpha + percent*(end_alpha - start_alpha);
+		scale = start_scale + percent*(end_scale - start_scale);
+		rotation = start_rotation + percent*(end_rotation - start_rotation);
+		last_frame_time = glfwGetTime();
 	}
 };
 
 struct ParticleEmitter: ParticleEntity
 {
 	string emission_entity_path;
-	vector<ParticleEntity>* active_entities;
+	vector<ParticleEmitter>* active_emitters;
+	vector<ParticleBillboard>* active_billboards;
+	
 	double emission_rate;
 	double last_emit_time;
-	double spawn_offset;
+	double spawn_delay;
 
 	void ConfigDefault(string jsonpath)
 	{
 		isBillboard = false;
 		timespawned = glfwGetTime();
+		last_frame_time = glfwGetTime();
 		last_emit_time = -1.0;
 
 		ifstream infile { jsonpath };
@@ -217,6 +257,9 @@ struct ParticleEmitter: ParticleEntity
 
 		jsonVerify::verifyDouble(document, "lifespan", lifespan);
 
+		glm::vec3 offset;
+		glm::vec3 offset_range;
+
 		jsonVerify::verifyFloat(document, "offset_x", offset[0]);
 		jsonVerify::verifyFloat(document, "offset_y", offset[1]);
 		jsonVerify::verifyFloat(document, "offset_z", offset[2]);
@@ -225,11 +268,30 @@ struct ParticleEmitter: ParticleEntity
 		jsonVerify::verifyFloat(document, "offset_range_y", offset_range[1]);
 		jsonVerify::verifyFloat(document, "offset_range_z", offset_range[2]);
 
+    	offset_range[0] = ((float(rand()) / float(RAND_MAX)) * (offset_range[0] + offset_range[0])) - offset_range[0];
+    	cout << "\noffrange0 = " << offset_range[0];
+
+    	offset_range[1] = ((float(rand()) / float(RAND_MAX)) * (offset_range[1] + offset_range[1])) - offset_range[1];
+    	cout << "\noffrange1 = " << offset_range[1];
+
+    	offset_range[2] = ((float(rand()) / float(RAND_MAX)) * (offset_range[2] + offset_range[2])) - offset_range[2];
+    	cout << "\noffrange2 = " << offset_range[2];
+
+    	position = position + offset + offset_range;
+
+    	jsonVerify::verifyFloat(document, "start_velocity_x", velocity[0]);
+    	jsonVerify::verifyFloat(document, "start_velocity_y", velocity[1]);
+    	jsonVerify::verifyFloat(document, "start_velocity_z", velocity[2]);
+
+    	jsonVerify::verifyFloat(document, "acceleration_x", acceleration[0]);
+    	jsonVerify::verifyFloat(document, "acceleration_y", acceleration[1]);
+    	jsonVerify::verifyFloat(document, "acceleration_z", acceleration[2]);
+
 		jsonVerify::verifyString(document, "emission_entity", emission_entity_path);
 
 		jsonVerify::verifyDouble(document, "emission_rate", emission_rate);
 
-		jsonVerify::verifyDouble(document, "spawn_offset", spawn_offset);
+		jsonVerify::verifyDouble(document, "spawn_delay", spawn_delay);
 	}
 
 	void Emit()
@@ -246,33 +308,60 @@ struct ParticleEmitter: ParticleEntity
 		if(type == "emitter")
 		{
 			ParticleEmitter e;
-			e.active_entities = active_entities;
+			e.active_emitters = active_emitters;
+			e.active_billboards = active_billboards;
+			e.position = position;
 			e.ConfigDefault(emission_entity_path);
-			active_entities->push_back(e);
+			active_emitters->push_back(e);
 		}
 		else if(type == "billboard")
 		{
 			ParticleBillboard b;
+			b.position = position;
 			b.ConfigDefault(emission_entity_path);
-			active_entities->push_back(b);
+			active_billboards->push_back(b);
 		}
 		else
 		{
 			cout << "Emission entity read from " << emission_entity_path << " is defined as neither emitter nor billboard. Cannot emit." << endl;
 			return;
 		}
+		last_emit_time = glfwGetTime();
+	}
+
+	void Update()
+	{
+		float dtime = glfwGetTime() - last_frame_time;
+		velocity += dtime * acceleration;
+		position += dtime * velocity;
+		if(last_emit_time == -1.0)
+		{
+			if(glfwGetTime() - spawn_delay >= (1.0/emission_rate))
+			{
+				Emit();
+			}
+		}	
+		else
+		{
+			if(glfwGetTime() - last_emit_time >= (1.0/emission_rate))
+			{
+				Emit();
+			}
+		}
 	}
 };
 
 struct ParticleSystem
 {
-	vector<ParticleEntity> active_entities;
+	vector<ParticleEmitter> active_emitters;
+	vector<ParticleBillboard> active_billboards;
 	vector<string> emitter_paths;
 	glm::vec3 position;
-	double lifespan = 1.0;
+	bool is_finished;
 
 	void ConfigDefault(string jsonpath)
 	{
+		is_finished = false;
 		ifstream infile { jsonpath };
 		if(!infile)
 		{
@@ -284,19 +373,20 @@ struct ParticleSystem
 		rapidjson::Document document;
 		document.Parse(jsondata);
 
-		position[0] = document["position_x"].GetDouble();
-		position[1] = document["position_y"].GetDouble();
-		position[2] = document["position_z"].GetDouble();
-		lifespan = document["lifespan"].GetDouble();
+		jsonVerify::verifyFloat(document, "position_x", position[0]);
+		jsonVerify::verifyFloat(document, "position_y", position[1]);
+		jsonVerify::verifyFloat(document, "position_z", position[2]);
+
 		const rapidjson::Value& emitters = document["emitters"];
 		if(emitters.IsArray())
 		{
 			for (rapidjson::SizeType i = 0; i < emitters.Size(); i++)
 			{
 				ParticleEmitter e;
-				e.active_entities = &active_entities;
+				e.active_emitters = &active_emitters;
+				e.active_billboards = &active_billboards;
 				e.ConfigDefault(emitters[i].GetString());
-				active_entities.push_back(e);
+				active_emitters.push_back(e);
 			}
 		}
 		else
@@ -308,15 +398,31 @@ struct ParticleSystem
 
 	void Update()
 	{
-		for(int i = 0; i < active_entities.size(); i++)
+		for(int i = 0; i < active_emitters.size(); i++)
 		{
-			if((glfwGetTime() - active_entities[i].timespawned) >= active_entities[i].lifespan)
+			if(active_emitters[i].lifespan != -1 && (glfwGetTime() - active_emitters[i].timespawned) >= active_emitters[i].lifespan)
 			{
-				active_entities.erase(active_entities.begin()+i);
+				active_emitters.erase(active_emitters.begin()+i);
 			}
-			active_entities[i].Update();
+			else
+			{
+				active_emitters[i].Update();
+			}
 			// std::cout<<"\nactive_entities size: "<<active_entities.size();
 		}
+		for(int i = 0; i < active_billboards.size(); i++)
+		{
+			if(active_billboards[i].lifespan != -1 && (glfwGetTime() - active_billboards[i].timespawned) >= active_billboards[i].lifespan)
+			{
+				active_billboards.erase(active_billboards.begin()+i);
+			}
+			else
+			{
+				active_billboards[i].Update();
+			}
+			// std::cout<<"\nactive_entities size: "<<active_entities.size();
+		}
+		is_finished = (active_emitters.size() > 0 || active_billboards.size() > 0);
 			// std::cout<<"\nactive_entities size: "<<active_entities.size();
 		
 	}

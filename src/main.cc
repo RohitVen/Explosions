@@ -123,16 +123,16 @@ int main(int argc, char* argv[])
 	ParticleSystem ps;
 	string path = "/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/json/psdefault.json";
 	ps.ConfigDefault(path);
-	std::cout<<"\npositon: "<<ps.position.x<<" "<<ps.position.y<<" "<<ps.position.z;
-	std::cout<<"\nlifespan: "<<ps.lifespan;
+	// std::cout<<"\npositon: "<<ps.position.x<<" "<<ps.position.y<<" "<<ps.position.z;
+	// std::cout<<"\nlifespan: "<<ps.lifespan;
 
-	std::cout<<"\n\n";
-	ParticleEntity p = ps.active_entities[0];
+	// std::cout<<"\n\n";
+	// ParticleEntity p = ps.active_entities[0];
 
-	std::cout<<"\nEM1";
-	std::cout<<"\nEM1position: "<<p.offset.x<<" "<<p.offset.y<<" "<<p.offset.z;
-	std::cout<<"\nEM1lifespan: "<<p.lifespan;
-	std::cout<<"\nEM1range: "<<p.offset_range.x<<" "<<p.offset_range.y<<" "<<p.offset_range.z;
+	// std::cout<<"\nEM1";
+	// std::cout<<"\nEM1position: "<<p.offset.x<<" "<<p.offset.y<<" "<<p.offset.z;
+	// std::cout<<"\nEM1lifespan: "<<p.lifespan;
+	// std::cout<<"\nEM1range: "<<p.offset_range.x<<" "<<p.offset_range.y<<" "<<p.offset_range.z;
 
 
 	GLFWwindow *window = init_glefw();
@@ -261,11 +261,13 @@ int main(int argc, char* argv[])
 	//        Otherwise do whatever you like.
 
 	//Start Billboard Code//
-
 	std::vector<glm::vec4> bill_vertices;
 	std::vector<glm::uvec3> bill_faces;
 	std::vector<glm::vec4> bill_center;
 	std::vector<glm::vec2> bill_uv;
+	std::vector<float> rot;
+	std::vector<float> scale;
+	std::vector<glm::vec4> colors;
 	for(int i = 0; i < bill_uv.size(); i++)
 	{
 		std::cout<<"\nSHOULD NOT GET IN HERE!!";
@@ -276,9 +278,7 @@ int main(int argc, char* argv[])
 	double radius = 0.75;
 	double toRad = M_PI/180;
 	double deg = 0;
-	float scale = 1;
-	float rot = 0.5;
-	bill_center.push_back(glm::vec4(0,0,0,1));
+	// bill_center.push_back(glm::vec4(0,0,0,1));
 
 	// Following code developed using online tutorial
 	unsigned char *data;
@@ -322,88 +322,88 @@ int main(int argc, char* argv[])
 	//Start Texture Code//
 
 	// Set up vertex data (and buffer(s)) and attribute pointers
-	GLuint VBO, VAO, EBO, UVO;
-    glGenVertexArrays(1, &VAO);
+	// GLuint VBO, VAO, EBO, UVO;
+ //    glGenVertexArrays(1, &VAO);
 
-    const std::vector<const char*> shaders = { bill_vertex_shader, nullptr, tex_fragment_shader};
-	unsigned sampler2d_;
-	unsigned vs_ = 0, gs_ = 0, fs_ = 0;
-	unsigned sp_ = 0;
+ //    const std::vector<const char*> shaders = { bill_vertex_shader, nullptr, bill_fragment_shader};
+	// unsigned sampler2d_;
+	// unsigned vs_ = 0, gs_ = 0, fs_ = 0;
+	// unsigned sp_ = 0;
 
-	// Program first  
-	vs_ = compileShader(shaders[0], GL_VERTEX_SHADER);
-	gs_ = compileShader(shaders[1], GL_GEOMETRY_SHADER);
-	fs_ = compileShader(shaders[2], GL_FRAGMENT_SHADER);
-	CHECK_GL_ERROR(sp_ = glCreateProgram());
-	glAttachShader(sp_, vs_);
-	glAttachShader(sp_, fs_);
-	if (shaders[1])
-		glAttachShader(sp_, gs_);
+	// // Program first  
+	// vs_ = compileShader(shaders[0], GL_VERTEX_SHADER);
+	// gs_ = compileShader(shaders[1], GL_GEOMETRY_SHADER);
+	// fs_ = compileShader(shaders[2], GL_FRAGMENT_SHADER);
+	// CHECK_GL_ERROR(sp_ = glCreateProgram());
+	// glAttachShader(sp_, vs_);
+	// glAttachShader(sp_, fs_);
+	// if (shaders[1])
+	// 	glAttachShader(sp_, gs_);
 
-	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &UVO);
-    glGenBuffers(1, &EBO);
-    glBindVertexArray(VAO);
+	// glGenBuffers(1, &VBO);
+	// glGenBuffers(1, &UVO);
+ //    glGenBuffers(1, &EBO);
+ //    glBindVertexArray(VAO);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float)* 4 * bill_vertices.size(), nullptr, GL_STATIC_DRAW);
+ //    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+ //    glBufferData(GL_ARRAY_BUFFER, sizeof(float)* 4 * bill_vertices.size(), nullptr, GL_STATIC_DRAW);
 
-    // Position attribute
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(0);
-	CHECK_GL_ERROR(glBindAttribLocation(sp_, 0, "position"));
+ //    // Position attribute
+ //    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+ //    glEnableVertexAttribArray(0);
+	// CHECK_GL_ERROR(glBindAttribLocation(sp_, 0, "position"));
 
-	//UV attribute
-	glBindBuffer(GL_ARRAY_BUFFER, UVO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float)* 2 * bill_uv.size(), bill_uv.data(), GL_STATIC_DRAW);
+	// //UV attribute
+	// glBindBuffer(GL_ARRAY_BUFFER, UVO);
+ //    glBufferData(GL_ARRAY_BUFFER, sizeof(float)* 2 * bill_uv.size(), bill_uv.data(), GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(0);
-	CHECK_GL_ERROR(glBindAttribLocation(sp_, 0, "uv"));
+	// glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+ //    glEnableVertexAttribArray(0);
+	// CHECK_GL_ERROR(glBindAttribLocation(sp_, 0, "uv"));
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float)* 3 * bill_faces.size(), nullptr, GL_STATIC_DRAW);
+	// glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+ //    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float)* 3 * bill_faces.size(), nullptr, GL_STATIC_DRAW);
     
-    CHECK_GL_ERROR(glBindFragDataLocation(sp_, 0, "color"));
+ //    CHECK_GL_ERROR(glBindFragDataLocation(sp_, 0, "color"));
 
-    glLinkProgram(sp_);
-	CHECK_GL_PROGRAM_ERROR(sp_);
+ //    glLinkProgram(sp_);
+	// CHECK_GL_PROGRAM_ERROR(sp_);
 
-    // Get the uniform locations.
-	GLint projection_matrix_location = 0;
-	CHECK_GL_ERROR(projection_matrix_location =
-			glGetUniformLocation(sp_, "projection"));
-	GLint view_matrix_location = 0;
-	CHECK_GL_ERROR(view_matrix_location =
-			glGetUniformLocation(sp_, "view"));
+ //    // Get the uniform locations.
+	// GLint projection_matrix_location = 0;
+	// CHECK_GL_ERROR(projection_matrix_location =
+	// 		glGetUniformLocation(sp_, "projection"));
+	// GLint view_matrix_location = 0;
+	// CHECK_GL_ERROR(view_matrix_location =
+	// 		glGetUniformLocation(sp_, "view"));
 
-    glBindVertexArray(0); // Unbind VAO
+ //    glBindVertexArray(0); // Unbind VAO
 
-	//Code above taken from render_pass
+	// //Code above taken from render_pass
 
-    // Load and create a texture 
-    GLuint texture1;
-    std::cout<<"\nCreated a texture!";
-    // ====================
-    // Texture 1
-    // ====================
-    glGenTextures(1, &texture1);
-    glBindTexture(GL_TEXTURE_2D, texture1); // All upcoming GL_TEXTURE_2D operations now have effect on our texture object
-    // Set our texture parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);	// Set texture wrapping to GL_REPEAT
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-    std::cout<<"\nSet texture parameters!";
-    // Set texture filtering
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    std::cout<<"\nSet texture filtering!";    
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, u2, v2, 0, GL_RGBA, GL_UNSIGNED_BYTE, &data2[0]);
-    std::cout<<"\nSet TexImage2D!!";
-    glGenerateMipmap(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
+ //    // Load and create a texture 
+ //    GLuint texture1;
+ //    std::cout<<"\nCreated a texture!";
+ //    // ====================
+ //    // Texture 1
+ //    // ====================
+ //    glGenTextures(1, &texture1);
+ //    glBindTexture(GL_TEXTURE_2D, texture1); // All upcoming GL_TEXTURE_2D operations now have effect on our texture object
+ //    // Set our texture parameters
+ //    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);	// Set texture wrapping to GL_REPEAT
+ //    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+ //    std::cout<<"\nSet texture parameters!";
+ //    // Set texture filtering
+ //    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+ //    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+ //    std::cout<<"\nSet texture filtering!";    
+ //    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, u2, v2, 0, GL_RGBA, GL_UNSIGNED_BYTE, &data2[0]);
+ //    std::cout<<"\nSet TexImage2D!!";
+ //    glGenerateMipmap(GL_TEXTURE_2D);
+ //    glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
 
-    std::cout<<"\nFINISHED TEXTURE LOADING!";
-	glBindVertexArray(0);
+ //    std::cout<<"\nFINISHED TEXTURE LOADING!";
+	// glBindVertexArray(0);
 
 
 
@@ -443,45 +443,77 @@ int main(int argc, char* argv[])
 #endif
 		// FIXME: Draw bones first.
 		ps.Update();
+		bill_center.clear();
+		bill_vertices.clear();
+		bill_faces.clear();
+		bill_uv.clear();
+		scale.clear();
+		rot.clear();
+		colors.clear();
+		for(int i = 0; i < ps.active_billboards.size(); i++)
+		{
+			// std::cout<<"\nGot a billboard!";
+			bill_center.push_back(glm::vec4(ps.active_billboards[i].position,1));
+			scale.push_back(ps.active_billboards[i].scale);
+			rot.push_back(ps.active_billboards[i].rotation * toRad);
+			colors.push_back(glm::vec4(ps.active_billboards[i].color,1));
+		}
+		create_bill(&gui, bill_vertices, bill_faces, bill_center, scale, rot);
+
 		if(draw_bill)
 		{
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			// glEnable(GL_BLEND);
+			// glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-			glUseProgram(sp_);
-			std::vector<ShaderUniform> uniforms_ = {std_proj, std_view};
-			const std::vector<unsigned> unilocs_ = {projection_matrix_location, view_matrix_location};
-			bind_uniforms(uniforms_, unilocs_);
-			glBindVertexArray(VAO);			
+			// glUseProgram(sp_);
+			// std::vector<ShaderUniform> uniforms_ = {std_proj, std_view};
+			// const std::vector<unsigned> unilocs_ = {projection_matrix_location, view_matrix_location};
+			// bind_uniforms(uniforms_, unilocs_);
+			// glBindVertexArray(VAO);			
 
-			bill_vertices.clear();
-			bill_faces.clear();
-			bill_uv.clear();
-			scale = gui.scale;
-			rot = gui.rot;
-			rot = rot * toRad;
-			create_bill(&gui, bill_vertices, bill_faces, bill_center, scale, rot);
+			// create_bill(&gui, bill_vertices, bill_faces, bill_center, scale, rot);
 
-		    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		    glBufferData(GL_ARRAY_BUFFER, sizeof(float)* 4 * bill_vertices.size(), bill_vertices.data(), GL_STATIC_DRAW);
+		 //    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		 //    glBufferData(GL_ARRAY_BUFFER, sizeof(float)* 4 * bill_vertices.size(), bill_vertices.data(), GL_STATIC_DRAW);
 
-		    // Position attribute
-		    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
-		    glEnableVertexAttribArray(0);
-			CHECK_GL_ERROR(glBindAttribLocation(sp_, 0, "position"));
+		 //    // Position attribute
+		 //    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+		 //    glEnableVertexAttribArray(0);
+			// CHECK_GL_ERROR(glBindAttribLocation(sp_, 0, "position"));
 
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float)* 3 * bill_faces.size(), bill_faces.data(), GL_STATIC_DRAW);
+			// glBindBuffer(GL_ARRAY_BUFFER, UVO);
+			// glBufferData(GL_ARRAY_BUFFER, sizeof(float)* 4 * colors.size(), colors.data(), GL_STATIC_DRAW);
+
+		 //    // Color attribute
+		 //    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+		 //    glEnableVertexAttribArray(0);
+			// CHECK_GL_ERROR(glBindAttribLocation(sp_, 1, "color"));
+
+			// glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+   //  		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float)* 3 * bill_faces.size(), bill_faces.data(), GL_STATIC_DRAW);
 		    
-		    CHECK_GL_ERROR(glBindFragDataLocation(sp_, 0, "color"));
+		 //    CHECK_GL_ERROR(glBindFragDataLocation(sp_, 0, "color"));
 
-			// Bind Textures using texture units
-	        glActiveTexture(GL_TEXTURE0);
-	        glBindTexture(GL_TEXTURE_2D, texture1);
-	        glUniform1i(glGetUniformLocation(sp_, "ourTexture1"), 0);
+			// // Bind Textures using texture units
+	  //       glActiveTexture(GL_TEXTURE0);
+	  //       glBindTexture(GL_TEXTURE_2D, texture1);
+	  //       glUniform1i(glGetUniformLocation(sp_, "ourTexture1"), 0);
+
+	        RenderDataInput bill_pass_input;
+			bill_pass_input.assign(0, "position", bill_vertices.data(), bill_vertices.size(), 4, GL_FLOAT);	
+			bill_pass_input.assign(1, "color", colors.data(), colors.size(), 4, GL_FLOAT);	
+			bill_pass_input.assign_index(bill_faces.data(), bill_faces.size(), 4);
+			RenderPass bill_pass(-1,
+					bill_pass_input,
+					{ bill_vertex_shader, nullptr, bill_fragment_shader},
+					{ std_view, std_proj },
+					{ "color" }
+					);
+
+			bill_pass.setup();
 
 			CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, bill_faces.size() * 3, GL_UNSIGNED_INT, 0));
-			glBindVertexArray(0);
+			// glBindVertexArray(0);
 		}
 
 		// Then draw floor.
