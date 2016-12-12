@@ -11,6 +11,7 @@
 #include "../lib/jpegio.h"
 #include "../lib/image.h"
 #include "../lib/lodepng.h"
+#include "ParticleSystem.h"
 
 #include <algorithm>
 #include <fstream>
@@ -119,6 +120,21 @@ int main(int argc, char* argv[])
 		std::cerr << "Usage: " << argv[0] << " <PMD file>" << std::endl;
 		return -1;
 	}
+	ParticleSystem ps;
+	string path = "/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/src/json/psdefault.json";
+	ps.ConfigDefault(path);
+	std::cout<<"\npositon: "<<ps.position.x<<" "<<ps.position.y<<" "<<ps.position.z;
+	std::cout<<"\nlifespan: "<<ps.lifespan;
+
+	std::cout<<"\n\n";
+	ParticleEntity p = ps.active_entities[0];
+
+	std::cout<<"\nEM1";
+	std::cout<<"\nEM1position: "<<p.offset.x<<" "<<p.offset.y<<" "<<p.offset.z;
+	std::cout<<"\nEM1lifespan: "<<p.lifespan;
+	std::cout<<"\nEM1range: "<<p.offset_range.x<<" "<<p.offset_range.y<<" "<<p.offset_range.z;
+
+
 	GLFWwindow *window = init_glefw();
 	GUI gui(window);
 
@@ -286,9 +302,9 @@ int main(int argc, char* argv[])
     	data2[4 * u2 * y + 4 * x + c] = data[4 * width * y + 4 * x + c];
   	}
 
-	std::cout<<"\npass: "<<pass<<"\n";  //Finished grabbing JPG data!!
-	std::cout<<"\nwidth: "<<width<<" "<<u2<<" "<<u3;
-	std::cout<<"\nheight: "<<height<<" "<<v2<<" "<<v3;
+	// std::cout<<"\npass: "<<pass<<"\n";  //Finished grabbing JPG data!!
+	// std::cout<<"\nwidth: "<<width<<" "<<u2<<" "<<u3;
+	// std::cout<<"\nheight: "<<height<<" "<<v2<<" "<<v3;
 
 	bill_uv.push_back(glm::vec2(1,1));
 	bill_uv.push_back(glm::vec2(1,0));
@@ -342,7 +358,7 @@ int main(int argc, char* argv[])
     glBufferData(GL_ARRAY_BUFFER, sizeof(float)* 2 * bill_uv.size(), bill_uv.data(), GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(2);
+    glEnableVertexAttribArray(0);
 	CHECK_GL_ERROR(glBindAttribLocation(sp_, 0, "uv"));
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
@@ -426,6 +442,7 @@ int main(int argc, char* argv[])
 		draw_cylinder = true;
 #endif
 		// FIXME: Draw bones first.
+		ps.Update();
 		if(draw_bill)
 		{
 			glEnable(GL_BLEND);

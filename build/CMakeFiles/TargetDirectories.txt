@@ -1,2 +1,0 @@
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/build/src/CMakeFiles/skinning.dir
-/v/filer4b/v38q001/rohitven/Desktop/CS354/A4/explosions/build/CMakeFiles/utgraphicsutil.dir
